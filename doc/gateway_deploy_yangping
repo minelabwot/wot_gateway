@@ -13,7 +13,8 @@ dest usb /mnt/usb
 3> 
 opkg update   
 opkg -d usb install python
-
+4>  开机挂载U盘    修改 /etc/rc.local 文件
+增加   mount /dev/sda1 /mnt/usb
 2. 将网关程序考到板子上  scp -r wot_gateway/ root@192.168.8.1:/mnt/usb/
 3. 运行与平台通信的程序  python  /mnt/usb/wot_gateway/bin/gateway/main.py
 4.  运行alljoyn后台   /mnt/usb/wot_gateway/bin/alljoyn/alljoyn-daemon &
