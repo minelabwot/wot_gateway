@@ -1,0 +1,21 @@
+1. 挂载U盘安装python
+1>格式化U盘   mkfs.ext4 /dev/sda2
+2> 挂载到 /mnt/usb 目录下   
+修改 /etc/profile 
+export PATH=/usr/bin:/usr/sbin:/bin:/sbin:/mnt/usb/usr/bin:/mnt/usb/sbin:/mnt/usb/usr/local/bin:/mnt/usb/usr/local/sbin
+export LD_LIBRARY_PATH=/mnt/usb/usr/lib:$LD_LIBRARY_PATH
+修改/etc/opkg.conf
+dest root /
+dest ram /tmp
+lists_dir ext /var/opkg-lists
+option overlay_root /overlay
+dest usb /mnt/usb
+3> 
+opkg update   
+opkg -d usb install python
+
+2. 将网关程序考到板子上  scp -r wot_gateway/ root@192.168.8.1:/mnt/usb/
+3. 运行与平台通信的程序  python  /mnt/usb/wot_gateway/bin/gateway/main.py
+4.  运行alljoyn后台   /mnt/usb/wot_gateway/bin/alljoyn/alljoyn-daemon &
+5. 运行alljoyn 服务端   /mnt/usb/wot_gateway/bin/alljoyn/aj_server 127.0.0.1
+​6. 运行 microduino     /mnt/usb/wot_gateway/bin/microduino/helloworld
