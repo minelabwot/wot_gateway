@@ -22,7 +22,8 @@ class WrtGateway:
 	def reg_hwid(self):
 		# register hardware id
 	
-		self.hwid = '200000'
+		#self.hwid = '200000'
+		self.hwid = common.get_mac_addr()
 		print 'hwid:',self.hwid
 		WrtGateway.s_hwid = self.hwid
 

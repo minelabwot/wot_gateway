@@ -36,6 +36,7 @@ def rd_local_cfg():
 	global url_uploadData
 	global url_sensorData
 	global url_hb
+	global url_control
 	
 	for line in open("cfg/local.cfg"):
 		l = line.strip().split('=')
