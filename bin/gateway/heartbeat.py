@@ -29,15 +29,19 @@ class HBThread(threading.Thread):
 	def run(self):
 		while True:
 			print '[HBThread] uploading heartbeat'
-			ret1 = restful.method_get(init.hostandport + '/WIFPd/HeartBeat/804384')
+			ret1 = restful.method_get(init.url_hb + '/' + WrtGateway.s_hwid)
 			content = ret1.split('Content>')[1].split('<')[0]
 			#print '[HBThread] content:',content
 			if content == '0#1':
 				print '[HBThread] command coming.issuing command...'
 				self.hbsock.sendto('On',('',9000))
 
-			ret2 = restful.method_get(init.hostandport + '/WIFPa/extension/command?hwid=804384')
-			print 'command ret2:',ret2.split('Content>')[1].split('<')[0]
+			try:
+				ret2 = restful.method_get(init.url_control + '=' + WrtGateway.s_hwid)
+			except:
+				print 'heartbeat exception'
+
+			print 'command ret:',ret2.split('Content>')[1].split('<')[0]
 
 			time.sleep(self.interval)
 

@@ -63,9 +63,6 @@ if __name__ == '__main__':
 	# mail is given
 	gw = WrtGateway(alias,mail)
 
-	#gw.test()
-	#input()
-
 	# if hwid exists,then it will fail
 	gw.reg_hwid()
 
