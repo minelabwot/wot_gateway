@@ -1,0 +1,35 @@
+Package: python
+Version: 2.7.3-2
+Depends: libc, libpthread, zlib, libffi, python-mini
+Provides:
+Status: install user installed
+Architecture: ralink
+Installed-Time: 1422332480
+
+Package: libffi
+Version: 3.0.10-1
+Depends: libc
+Provides:
+Status: install ok installed
+Architecture: ralink
+Installed-Time: 1422332467
+Auto-Installed: yes
+
+Package: python-mini
+Version: 2.7.3-2
+Depends: libc, libpthread, zlib
+Provides:
+Status: install ok installed
+Architecture: ralink
+Installed-Time: 1422332476
+Auto-Installed: yes
+
+Package: zlib
+Version: 1.2.7-1
+Depends: libc
+Provides:
+Status: install ok installed
+Architecture: ralink
+Installed-Time: 1422332467
+Auto-Installed: yes
+
