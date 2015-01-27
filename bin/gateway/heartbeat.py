@@ -33,15 +33,16 @@ class HBThread(threading.Thread):
 			content = ret1.split('Content>')[1].split('<')[0]
 			#print '[HBThread] content:',content
 			if content == '0#1':
-				print '[HBThread] command coming.issuing command...'
+				print '[HBThread] command coming.issuing command to device...'
 				self.hbsock.sendto('On',('',9000))
 
 			try:
 				ret2 = restful.method_get(init.url_control + '=' + WrtGateway.s_hwid)
-			except:
-				print 'heartbeat exception'
+				print 'command ret:',ret2.split('Content>')[1].split('<')[0]
 
-			print 'command ret:',ret2.split('Content>')[1].split('<')[0]
+			except:
+				#print 'heartbeat exception'
+				pass			
 
 			time.sleep(self.interval)
 
