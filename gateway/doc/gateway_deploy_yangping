@@ -4,11 +4,14 @@
 修改 /etc/profile 
 export PATH=/usr/bin:/usr/sbin:/bin:/sbin:/mnt/usb/wot_gateway/usr/bin:/mnt/usb/wot_gateway/gateway/bin
 export LD_LIBRARY_PATH=/mnt/usb/wot_gateway/usr/lib:/mnt/usb/wot_gateway/gateway/lib:$LD_LIBRARY_PATH
-运行  source /etc/profile
-4>  开机挂载U盘    修改 /etc/rc.local 文件
+3>  修改 /etc/inittab 在最后一行前面添加 #
+4>  运行  source /etc/profile
+5>  将MicrowrtUPIN板设置为Core模式
+6>  运行reboot 重启板子
+7>  开机挂载U盘    修改 /etc/rc.local 文件
 增加   mount /dev/sda1 /mnt/usb
 2. 将网关程序考到板子上  scp -r wot_gateway/ root@192.168.8.1:/mnt/usb/
-3. 运行与平台通信的程序  python  /mnt/usb/wot_gateway/gateway/bin/gateway/main.py
+3. 运行与平台通信的程序  python  /mnt/usb/wot_gateway/gatewpay/bin/gateway/main.py
 4.  运行alljoyn后台   /mnt/usb/wot_gateway/gateway/bin/alljoyn/alljoyn-daemon &
 5. 运行alljoyn 服务端   /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_server 127.0.0.1
 ​6. 运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld
