@@ -3,7 +3,7 @@
   */
 String myStringSerial="stt:,m:";
 String myStringSerial1="";
-char* myStringSerial_down="";
+String myStringSerial_down="";
 void setup()  
 {
   Serial.begin(115200);
@@ -32,28 +32,21 @@ void loop() // run over and over
 
 void serialEvent()
 {
-  if(Serial.available()>0)
+  while(Serial.available()>0)
   {
     myStringSerial_down += char(Serial.read());
-    if(strstr(myStringSerial_down,"+Z")||strstr(myStringSerial_down,"+B"))
+    delay(2);
+  }
+//    myStringSerial_down = "+ZBD=1983,on";
+  for(int i=0;i<myStringSerial_down.length();i++)
+  {
+    if( myStringSerial_down[i]=='+'&& myStringSerial_down[i+1]=='Z')
     {
-      delay(2);
-      while (Serial.available() > 0)  
-      {
-        myStringSerial_down += char(Serial.read());
-        delay(2);
-      }
-      if (strlen(myStringSerial_down)> 0)
-      {
-        Serial1.print(myStringSerial_down);
-        myStringSerial_down="";
-      }
-    }
-    else
-    {
-      myStringSerial_down="";
+      myStringSerial_down += "\r\n";
+      Serial1.print(myStringSerial_down);
+      Serial.print(myStringSerial_down);
+      break;
     }
   }
+  myStringSerial_down="";
 }
-
-
