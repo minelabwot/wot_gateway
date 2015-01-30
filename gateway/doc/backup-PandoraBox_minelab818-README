@@ -6,4 +6,10 @@
 4>点击"打开文件"，把文件加入后点击备份。等备份重启完就可以了。
 
 注意：
-由于是统一设定，所以WiFi名称均为PandoraBox_minelab818，IP地址为192.168.8.1。所以想更改的可以通过修改/etc/config/wireless文件修改WiFi名称。
+1、由于是统一设定，所以WiFi名称均为PandoraBox_minelab818，IP地址为192.168.8.1。所以想更改的可以通过修改/etc/config/wireless文件修改WiFi名称。
+
+2、仅更新了配置，没有更新文件。所以仍需要一下两步：
+2.1、mkdir /mnt/usb
+2.2、mkfs.ext4 /dev/sda1
+
+然后就可以执行另外一个参考文件《gateway_deploy_yangping》的2到6了。
