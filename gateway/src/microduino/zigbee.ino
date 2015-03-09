@@ -4,14 +4,9 @@
   *使用RTC进行定时发送
   *先按照每个资源发送一次的方式进行发送
   */
-#include <Rtc_Pcf8563.h>
-#include <Wire.h>
-
-boolean send_message_flag=LOW;
 int send_message_num=0;
 
 String myStringSerial="";
-Rtc_Pcf8563 RTC;
 int res_num=2;
 int temperature_port=1;
 int photoresistance_port=2;
@@ -35,29 +30,12 @@ void setup()
   Serial.begin(9600);
   Serial1.begin(9600);
   
-//  //RTC时钟控制
-//  //clear out all the registers
-//  RTC.initClock();
-//  //set a time to start with.
-//  //day, weekday, month, century, year
-//  RTC.setDate(14, 6, 3, 0, 10);
-//  //hr, min, sec
-//  RTC.setTime(1, 15, 40);
-  
   //节点注册
   login();
 }
  
 void loop() // run over and over
 {
-//  int time=RTC.getSecond();
-//  if(time==20)
-//  {
-//    Serial.println(time);
-//    rtc();
-//    temperature();
-//    photoresistance();
-//  }
 
   send_message();
   
@@ -69,15 +47,6 @@ void loop() // run over and over
 //  }
 }
 
-void rtc()
-{
-  //调用时间，不能缺少
-  RTC.formatDate();
-  RTC.formatTime();
-  
-  Serial.println(RTC.getSecond());
-}
-
 void send_message()
 {
   int delay_time=1000*20;
@@ -86,7 +55,6 @@ void send_message()
   delay(3000);
 //  myStringSerial += ',';
   photoresistance();
-  send_message_flag=!send_message_flag;
 }
 
 void temperature()
