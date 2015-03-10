@@ -200,59 +200,28 @@ int data_analysis(int fd, char readbuff[])
 	int i = 0, j = 0,k=0,datalen = 0;
 	if (readbuff[0] == 's'&&readbuff[1] == 't'&&readbuff[2] == 't'&&readbuff[3] == ':')
     {
-        strcpy(buff, readbuff);
 		while (1)
         {
-			for (i = 0; i < strlen(readbuff); i++)
+            strcpy(buff, readbuff);
+			for (i = 0; i < strlen(buff); i++)
 			{
-				if (buff[datalen+i - 3] == ':' && buff[datalen+i - 2] == 's' && buff[datalen+i - 1] == 't' && buff[datalen+i] == 't')
+				if (buff[i] == ':' && buff[i+1] == 's' && buff[i+2] == 't' && buff[i+3] == 't')
 				{
 					stop_buf = 1;
-					for (j = i+1; j < strlen(buff); j++)
-					{
-						buff[datalen + j] = '\0';
-					}
+					buff[datalen + i + 4] = '\0';
 					break;
 				}
-				else if (buff[datalen+i - 2] == ':' && buff[datalen+i - 1] == 's' && buff[datalen+i] == 't' && buff[datalen+i + 1] == 't')
-				{
-					stop_buf = 1;
-					for (j = i + 2; j < strlen(buff); j++)
-					{
-						buff[datalen + j] = '\0';
-					}
-					break;
-				}
-				else if (buff[datalen+i - 1] == ':' && buff[datalen+i] == 's' && buff[datalen+i + 1] == 't' && buff[datalen+i + 2] == 't')
-				{
-					stop_buf = 1;
-					for (j = i + 3; j < strlen(buff); j++)
-					{
-						buff[datalen + j] = '\0';
-					}
-					break;
-				}
-				else if (buff[datalen+i] == ':' && buff[datalen+i + 1] == 's' && buff[datalen+i + 2] == 't' && buff[datalen+i + 3] == 't')
-				{
-					stop_buf = 1;
-					for (j =i + 4; j < strlen(buff); j++)
-					{
-						buff[datalen + j] = '\0';
-					}
-					break;
-				}
-			}
+            }
 			if (stop_buf == 1)
 			{
 				break;
 			}
-            datalen = strlen(buff);
             printf("buff=%s\n", buff);
             printf("stop_buff=%d\n",stop_buf);
             memset(readbuff, '\0', sizeof(readbuff));
 //			bzero(readbuff, sizeof(readbuff));
-			serial_read(fd, readbuff, 512);
-            strcat(buff,readbuff);
+			while(serial_read(fd, readbuff, 512)>3);
+//            strcat(buff,readbuff);
 		}
 		//serial_write(fd, buff, sizeof(buff));
 		printf("buff=%s\n", buff);
