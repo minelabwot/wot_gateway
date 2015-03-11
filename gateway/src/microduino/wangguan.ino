@@ -1,7 +1,7 @@
 /**
   *这是网关microduino侧的程序
   */
-#include<String>
+#include<string>
 //#include <SoftwareSerial.h>
 //SoftwareSerial mySerial1(2,3);
 
@@ -13,7 +13,7 @@ String myStringSerial_flag="";
 //本地MAC列表
 String mac_message[5];
 String mac_address[5];
-long long start[5]={0,0,0,0,0};
+long long start[100]={0};
 int mac_address_num=0;
 
 void setup()  
@@ -33,8 +33,10 @@ void heart_check()
 {
   for(int i=0;i<5;i++)
   {
-    if((millis()-start[i])>120000 && start[i]!=0)
+    if(mac_address[i]!="" && (millis()-start[i])>50000)
     {
+//      Serial.println(mac_address[i]);
+//      Serial.println(i);
       mac_message[i][16]='1';
       myStringSerial += mac_message[i];
       Serial.print(myStringSerial);
@@ -49,29 +51,48 @@ void heart_check()
 
 void package_serial()
 {
+  int loops=0;
+  String mac_address_receive="";
   while (Serial1.available() > 0)  
   {
     myStringSerial1 += char(Serial1.read());
+    loops++;
+    if(loops==9) mac_address_receive=myStringSerial1;
     delay(2);
   }
   
   //心跳检测
-  String mac_address_receive=myStringSerial1;
-  mac_address_receive[9]='\0';
-  if(myStringSerial1[14]=='f')
+  if(myStringSerial1.length()>0)
   {
-    mac_message[mac_address_num]=myStringSerial1;
-    mac_address[mac_address_num]=mac_address_receive;
-    mac_address_num++;
-  }
-  else
-  {
-    for(int i=0;i<5;i++)
+//    String mac_address_receive="";
+//    for(int i=0;i<9;i++)
+//    {
+//      mac_address_receive[i]=char(myStringSerial1[i]);
+//      Serial.println(myStringSerial1[i]);
+//    }
+//    String mac_address_receive=myStringSerial1;
+//    mac_address_receive[9]='\0';
+//    Serial.println(mac_address_receive);
+//    Serial.println(myStringSerial1);
+    if(myStringSerial1[14]=='f')
     {
-      if(mac_address[i]==mac_address_receive)
+      mac_message[mac_address_num]=myStringSerial1;
+      mac_address[mac_address_num]=mac_address_receive;
+      start[mac_address_num]=millis();
+//      Serial.println(mac_message[mac_address_num]);
+//      Serial.println(mac_address[mac_address_num]);
+      mac_address_num++;
+    }
+    else
+    {
+      for(int i=0;i<mac_address_num;i++)
       {
-        start[i]=millis();
-        break;
+        if(mac_address[i]==mac_address_receive)
+        {
+          start[i]=millis();
+//          Serial.println(i);
+          break;
+        }
       }
     }
   }
