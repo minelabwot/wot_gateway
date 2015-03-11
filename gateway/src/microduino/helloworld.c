@@ -200,7 +200,7 @@ int data_analysis(int fd, char readbuff[])
 	int i = 0, j = 0,k=0,datalen = 0;
 	if (readbuff[0] == 's'&&readbuff[1] == 't'&&readbuff[2] == 't'&&readbuff[3] == ':')
     {
-		while (1)
+		if(strlen(readbuff)>8)
         {
             strcpy(buff, readbuff);
 			for (i = 0; i < strlen(buff); i++)
@@ -212,19 +212,15 @@ int data_analysis(int fd, char readbuff[])
 					break;
 				}
             }
-			if (stop_buf == 1)
-			{
-				break;
-			}
             printf("buff=%s\n", buff);
             printf("stop_buff=%d\n",stop_buf);
             memset(readbuff, '\0', sizeof(readbuff));
 //			bzero(readbuff, sizeof(readbuff));
-			while(serial_read(fd, readbuff, 512)>3);
+//			while(serial_read(fd, readbuff, 512)>3);
 //            strcat(buff,readbuff);
 		}
 		//serial_write(fd, buff, sizeof(buff));
-		printf("buff=%s\n", buff);
+		//printf("buff=%s\n", buff);
 	}
     return(stop_buf);
 }
