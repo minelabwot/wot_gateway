@@ -34,7 +34,7 @@ class HBThread(threading.Thread):
 			#print '[HBThread] content:',content
 			if content == '0#1':
 				print '[HBThread] command coming.issuing command to device...'
-				self.hbsock.sendto('On',('',9000))
+				self.hbsock.sendto('on',('',8888))
 
 			try:
 				ret2 = restful.method_get(init.url_control + '=' + WrtGateway.s_hwid)
