@@ -120,9 +120,9 @@ void serialEvent()
     {
       myStringSerial_down += "\r\n";
       Serial1.print(myStringSerial_down);
-      Serial.print(myStringSerial_down);
+      //Serial.print(myStringSerial_down);
+	  myStringSerial_down="";
       break;
     }
   }
-  myStringSerial_down="";
 }
