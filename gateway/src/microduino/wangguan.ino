@@ -64,16 +64,6 @@ void package_serial()
   //心跳检测
   if(myStringSerial1.length()>0)
   {
-//    String mac_address_receive="";
-//    for(int i=0;i<9;i++)
-//    {
-//      mac_address_receive[i]=char(myStringSerial1[i]);
-//      Serial.println(myStringSerial1[i]);
-//    }
-//    String mac_address_receive=myStringSerial1;
-//    mac_address_receive[9]='\0';
-//    Serial.println(mac_address_receive);
-//    Serial.println(myStringSerial1);
     if(myStringSerial1[14]=='f')
     {
       mac_message[mac_address_num]=myStringSerial1;
@@ -97,13 +87,13 @@ void package_serial()
     }
   }
   
-  if (myStringSerial1.length() > 0)
+  if (myStringSerial1.length() > 17)
   {   
     myStringSerial += myStringSerial1;
     Serial.print(myStringSerial);
-    myStringSerial="stt:,m:";
-    myStringSerial1="";
   }
+  myStringSerial="stt:,m:";
+  myStringSerial1="";
 }
 
 void serialEvent()
@@ -120,8 +110,8 @@ void serialEvent()
     {
       myStringSerial_down += "\r\n";
       Serial1.print(myStringSerial_down);
-      //Serial.print(myStringSerial_down);
-	  myStringSerial_down="";
+//      Serial.print(myStringSerial_down);
+      myStringSerial_down="";
       break;
     }
   }
