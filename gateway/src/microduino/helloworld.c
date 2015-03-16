@@ -197,7 +197,7 @@ int data_analysis(int fd, char readbuff[])
 {
     int stop_buf = 0;//作为标识符，检测是否存在规定的字符串。
 	printf("start to analysis...\n");
-	int i = 0, j = 0,k=0,datalen = 0;
+	int i = 0, j = 0;
 	if (readbuff[0] == 's'&&readbuff[1] == 't'&&readbuff[2] == 't'&&readbuff[3] == ':')
     {
 		if(strlen(readbuff)>8)
@@ -208,7 +208,8 @@ int data_analysis(int fd, char readbuff[])
 				if (buff[i] == ':' && buff[i+1] == 's' && buff[i+2] == 't' && buff[i+3] == 't')
 				{
 					stop_buf = 1;
-					buff[datalen + i + 4] = '\0';
+					for(j=i+4;j<strlen(buff);j++)
+						buff[j] = '\0';
 					break;
 				}
             }
