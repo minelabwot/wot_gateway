@@ -18,18 +18,52 @@ SoftwareSerial mySerial(4,5); // RX, TX
 IRsend irsend;                          // 定义 IRsend 物件来发射红外线讯号
 String myStringSerial_down="";
 
+long long heart_start=millis();
+
+void login()
+{
+  
+  //节点注册信息设置
+  int res_num=1;
+  int IR_port=1;
+  String myStringSerial = "c:";
+  myStringSerial += res_num;
+  myStringSerial += ",f:0,p:";
+  myStringSerial += IR_port;
+  myStringSerial +=",s:r";
+  myStringSerial += ":stt";
+  Serial.println(myStringSerial);
+  mySerial.print(myStringSerial);
+}
+
 void setup()  
 {
   Serial.begin(9600);
   mySerial.begin(9600);
   pinMode(4,INPUT);
   pinMode(5,OUTPUT);
+  
+  delay(3000);
+  //节点注册
+  login();
 }
  
 void loop() // run over and over
 {
   package_serial();
 //  test();
+  if(millis()-heart_start>13000)
+  {
+    heart_check();
+    heart_start=millis();
+  }
+}
+
+void heart_check()
+{
+  String myStringSerial = "heart";
+  Serial.println(myStringSerial);
+  mySerial.print(myStringSerial);
 }
 
 void package_serial()
