@@ -2,7 +2,7 @@
 import random
 import time
 import sys
-
+import re
 import restful
 import init
 import common
@@ -149,13 +149,15 @@ class WrtGateway:
 			print 'delete devid:' + devid + ' ok'
 		
 	@staticmethod	
-	def add_res(devid):
-		body = common.rd_prop('cfg/res_property.xml')
+	def add_res(devid,res_type):
+		body_init = common.rd_prop('cfg/res_property.xml')
+		strinfo=re.compile('type')
+		body=strinfo.sub(res_type,body_init)
 		header = {'Content-type':'text/xml'}
 		print '\nadd resource...'	
 		ret = restful.method_post(init.url_addRes + '/' + WrtGateway.s_mwid + '?devid=' + devid,body,header)
 		newresid = ret.split('>')[2].split('<')[0]
-
+		
 		if newresid == 'false':
 			print 'add resource failed'
 			sys.exit(-1)

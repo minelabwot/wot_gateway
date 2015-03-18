@@ -145,7 +145,8 @@ class Register_Del(threading.Thread):
 									for i in range(res_num):
 										# if add device, then res must be added !!!
 										#if result['Res'][i]['Res_port'] not in Register_Del.resLocal_resPlat_map:
-										res_id=WrtGateway.add_res(dev_id)
+										res_type=result['Res'][i]['Res_type']
+										res_id=WrtGateway.add_res(dev_id,res_type)
 										Register_Del.mac_resID_resPlat_map[result["Mac_address"]][str(result['Res'][i]['Res_port'])]=res_id
 										mac_resID_resPlat_write_to_cfg(result["Mac_address"],result['Res'][i]['Res_port'],res_id)
 
@@ -155,7 +156,8 @@ class Register_Del(threading.Thread):
 									dev_id=Register_Del.mac_dev_map[result['Mac_address']]
 									for i in range(res_num):
 										if str(result['Res'][i]['Res_port']) not in Register_Del.mac_resID_resPlat_map[result["Mac_address"]]:
-											res_id=WrtGateway.add_res(dev_id)
+											res_type=result['Res'][i]['Res_type']
+											res_id=WrtGateway.add_res(dev_id,res_type)
 
 											Register_Del.mac_resID_resPlat_map[result["Mac_address"]][str(result['Res'][i]['Res_port'])]=res_id
 											mac_resID_resPlat_write_to_cfg(result["Mac_address"],result['Res'][i]['Res_port'],res_id)
