@@ -4,6 +4,7 @@
 #include<string>
 //#include <SoftwareSerial.h>
 //SoftwareSerial mySerial1(2,3);
+const int mac_size=100;
 
 String myStringSerial="stt:,m:";
 String myStringSerial1="";
@@ -11,9 +12,9 @@ String myStringSerial_down="";
 String myStringSerial_flag="";
 
 //本地MAC列表
-String mac_message[5];
-String mac_address[5];
-long long start[100]={0};
+String mac_message[mac_size];
+String mac_address[mac_size];
+unsigned long start[mac_size];
 int mac_address_num=0;
 
 void setup()  
@@ -31,9 +32,9 @@ void loop() // run over and over
 
 void heart_check()
 {
-  for(int i=0;i<5;i++)
+  for(int i=0;i<mac_size;i++)
   {
-    if(mac_address[i]!="" && (millis()-start[i])>50000)
+    if(mac_address[i]!="" && (millis()-start[i])>11000)
     {
 //      Serial.println(mac_address[i]);
 //      Serial.println(i);
@@ -62,15 +63,16 @@ void package_serial()
   }
   
   //心跳检测
-  if(myStringSerial1.length()>0)
+  if(myStringSerial1.length()>8)
   {
     if(myStringSerial1[14]=='f')
     {
       mac_message[mac_address_num]=myStringSerial1;
       mac_address[mac_address_num]=mac_address_receive;
       start[mac_address_num]=millis();
-//      Serial.println(mac_message[mac_address_num]);
-//      Serial.println(mac_address[mac_address_num]);
+      Serial.println(mac_message[mac_address_num]);
+      Serial.println(mac_address[mac_address_num]);
+      Serial.println(start[mac_address_num]);
       mac_address_num++;
     }
     else
@@ -80,6 +82,7 @@ void package_serial()
         if(mac_address[i]==mac_address_receive)
         {
           start[i]=millis();
+          Serial.println(start[i]);
 //          Serial.println(i);
           break;
         }
@@ -87,8 +90,9 @@ void package_serial()
     }
   }
   
-  if (myStringSerial1.length() > 17)
-  {   
+  if (myStringSerial1.length() > 23 && (myStringSerial1[10] == 'c' || myStringSerial1[10] == 'p'))
+//  if(myStringSerial1.length() >23)
+  { 
     myStringSerial += myStringSerial1;
     Serial.print(myStringSerial);
   }
@@ -111,8 +115,8 @@ void serialEvent()
       myStringSerial_down += "\r\n";
       Serial1.print(myStringSerial_down);
 //      Serial.print(myStringSerial_down);
-      myStringSerial_down="";
       break;
     }
   }
+  myStringSerial_down="";
 }

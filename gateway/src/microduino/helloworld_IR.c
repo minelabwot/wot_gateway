@@ -22,6 +22,10 @@
 #include <arpa/inet.h>
 #define serial_device "/dev/ttyS1"
 
+//读取file_map，获取mac信息
+FILE *fp;
+char mac_address[100][100];
+
 char buff[512] = "";//定义数据字符串
 char readbuff[100] = "";//串口读取
 
@@ -154,6 +158,13 @@ int serialport()
 	return (fd);
 }
 
+//数据清空函数（为防止冲突，而将设置的数据在用完后全部清零。）同时清空标志位
+void data_delete()
+{
+    memset(buff, 0, sizeof(buff));
+    memset(readbuff,0,sizeof(buff));
+}
+
 //socket服务器
 //等待客户端发送信息
 int socket_server(int fd)
@@ -220,16 +231,28 @@ int socket_server(int fd)
 		}
 		if(strcmp(buff_temp,"")!=0)
 		{
-			int buff_temp_size=sizeof(buff_temp);
+			int buff_temp_size=strlen(buff_temp);
 			printf("OK\n");
 			buff_temp[buff_temp_size]='\r';
 			buff_temp[buff_temp_size+1]='\n';
 			buff_temp[buff_temp_size+2]='\0';
-			strcpy(buff,"+ZBD=1983,");
+			
+			//清空mac_address数组，方便接收mac信息
+			memset(mac_address,0,sizeof(mac_address));
+			//读取file_map文件
+			fp=fopen("file_map","r");
+			fscanf(fp,"%s",mac_address[0]);
+			fclose(fp);
+
+			memset(buff,0,sizeof(buff));
+			strcpy(buff,mac_address[0]);
+			strcat(buff,",");
+			//strcpy(buff,"+ZBD=1983,");
 			strcat(buff,buff_temp);
-			printf("%s\r\n",buff);
+			printf("%s\n",buff);
 			if(serial_write(fd,buff,15)<=0)
 				printf("serial_write is failed.");
+			data_delete();
 		}
         close(nfp);
     }
@@ -245,8 +268,8 @@ int main(void)
 	printf("fd=%d\n",fd);
 	
 	//尝试先写内容
-	nread=write(fd,"hello\r\n",8);
-	printf("nread%d\n",nread);
+	nread=serial_write(fd,"hello",8);
+	printf("nread=%d\n",nread);
 
     if(-1 == socket_server(fd))
     {

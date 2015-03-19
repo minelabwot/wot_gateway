@@ -26,10 +26,13 @@ void login()
   //节点注册信息设置
   int res_num=1;
   int IR_port=1;
+  String IR_type="TV";
   String myStringSerial = "c:";
   myStringSerial += res_num;
   myStringSerial += ",f:0,p:";
   myStringSerial += IR_port;
+  myStringSerial += ",t:";
+  myStringSerial += IR_type;
   myStringSerial +=",s:r";
   myStringSerial += ":stt";
   Serial.println(myStringSerial);
@@ -52,7 +55,7 @@ void loop() // run over and over
 {
   package_serial();
 //  test();
-  if(millis()-heart_start>13000)
+  if(millis()-heart_start>5000)
   {
     heart_check();
     heart_start=millis();

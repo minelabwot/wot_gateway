@@ -20,7 +20,8 @@
 #include <arpa/inet.h>
 #define serial_device "/dev/ttyS1"
 
-
+//设定文件，以便保存mac信息
+FILE *fp;
 
 char buff[512] = "";//定义数据字符串
 char readbuff[100] = "";//串口读取
@@ -195,27 +196,29 @@ void clock_synchronized(int fd)
 //数据分析——截取出有用字段
 int data_analysis(int fd, char readbuff[])
 {
-    int stop_buf = 0;//作为标识符，检测是否存在规定的字符串。
+	int stop_buf = 0;//作为标识符，检测是否存在规定的字符串。
 	printf("start to analysis...\n");
 	int i = 0, j = 0;
 	if (readbuff[0] == 's'&&readbuff[1] == 't'&&readbuff[2] == 't'&&readbuff[3] == ':')
     {
-		if(strlen(readbuff)>8)
+		if(strlen(readbuff)>18)
         {
-            strcpy(buff, readbuff);
-			for (i = 0; i < strlen(buff); i++)
+			stop_buf=0;
+			for (i = 0; i < strlen(readbuff); i++)
 			{
-				if (buff[i] == ':' && buff[i+1] == 's' && buff[i+2] == 't' && buff[i+3] == 't')
+				if (readbuff[i] == ':' && readbuff[i+1] == 's' && readbuff[i+2] == 't' && readbuff[i+3] == 't')
 				{
 					stop_buf = 1;
-					for(j=i+4;j<strlen(buff);j++)
-						buff[j] = '\0';
+					for(j=i+4;j<strlen(readbuff)+1;j++)
+						readbuff[j] = '\0';
 					break;
 				}
             }
+			printf("readbuff=%s\n",readbuff);
+			strcpy(buff,readbuff);
             printf("buff=%s\n", buff);
             printf("stop_buff=%d\n",stop_buf);
-            memset(readbuff, '\0', sizeof(readbuff));
+            memset(readbuff, 0, sizeof(readbuff));
 //			bzero(readbuff, sizeof(readbuff));
 //			while(serial_read(fd, readbuff, 512)>3);
 //            strcat(buff,readbuff);
@@ -331,7 +334,13 @@ void data_unpackaging(int fd, char buff[])
                         {
 							i = j + i + 2;
 							res_type[res_type_num][j] = '\0';
-                            res_type_num++;
+                            if((strcmp(res_type[res_type_num],"TV")==0)||(strcmp(res_type[res_type_num],"camera")==0))
+							{
+								fp=fopen("file_map","w");
+								fprintf(fp,"%s\n",mac_address[mac_num_recent]);
+								fclose(fp);
+							}
+							res_type_num++;
                             break;
                         }
 						res_type[res_type_num][j] = buff[j + i + 3];
@@ -522,14 +531,15 @@ void data_packaging(int fd,char buff[])
 //数据清空函数（为防止冲突，而将设置的数据在用完后全部清零。）同时清空标志位
 void data_delete()
 {
-    memset(buff, '\0', sizeof(buff));
-    memset(res_num, '\0', sizeof(res_num));
-    memset(res_flags, '\0', sizeof(res_flags));
-    memset(res_name, '\0', sizeof(res_name));
-    memset(res_type, '\0', sizeof(res_type));
-    memset(res_unit, '\0', sizeof(res_unit));
-    memset(res_port, '\0', sizeof(res_port));
-    memset(res_val, '\0', sizeof(res_val));
+    memset(buff, 0, sizeof(buff));
+	memset(readbuff,0,sizeof(buff));
+    memset(res_num, 0, sizeof(res_num));
+    memset(res_flags, 0, sizeof(res_flags));
+    memset(res_name, 0, sizeof(res_name));
+    memset(res_type, 0, sizeof(res_type));
+    memset(res_unit, 0, sizeof(res_unit));
+    memset(res_port, 0, sizeof(res_port));
+    memset(res_val, 0, sizeof(res_val));
 }
 //主函数
 int main(void)
@@ -556,7 +566,7 @@ int main(void)
 	while(1)
 	{
         printf("enter the while loop\n");
-		bzero(readbuff, strlen(readbuff));
+		bzero(readbuff, sizeof(readbuff));
 		nread = serial_read(fd, readbuff, 512);
 		if(nread>0&&data_analysis(fd, readbuff)==1)
 		{
