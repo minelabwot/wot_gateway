@@ -17,7 +17,6 @@ extern volatile sig_atomic_t g_joinComplete;
 
 void MyBusListener::FoundAdvertisedName(const char* name, TransportMask transport, const char* namePrefix)
 {
-	/* Join the conversation */
 	/* Since we are in a callback we must enable concurrent callbacks before calling a synchronous method. */
 	clientbus->EnableConcurrentCallbacks();
 	SessionOpts opts(SessionOpts::TRAFFIC_MESSAGES, true, SessionOpts::PROXIMITY_ANY, TRANSPORT_ANY);
@@ -36,24 +35,24 @@ void MyBusListener::FoundAdvertisedName(const char* name, TransportMask transpor
 		cout << "Set link timeout failed\n";
 	}
 	g_joinComplete = true;
-	obj->sendTestSignal_2(dev_prop);
+	obj->sendDevPropSignal(dev_prop);
 }
 
 void MyBusListener::LostAdvertisedName(const char* name, TransportMask transport, const char* namePrefix)
 {
-	//å®¢æˆ·ç«¯è°ƒç”¨
+	//¿Í»§¶Ëµ÷ÓÃ
 	cout << "client is losing advertised name:" << name << endl;
 }
 
 void MyBusListener::SessionLost (SessionId sessionId)
 {
-	// å®¢æˆ·ç«¯è°ƒç”¨ï¼Œå…ˆè°ƒç”¨äº†å®ƒï¼Œå†è°ƒç”¨LostAdvertisedName
+	// ¿Í»§¶Ëµ÷ÓÃ£¬ÏÈµ÷ÓÃÁËËü£¬ÔÙµ÷ÓÃLostAdvertisedName
 	cout << "\nsession " << sessionId << " lost\n";
 }
 
 void MyBusListener::NameOwnerChanged(const char* busName, const char* previousOwner, const char* newOwner)
 {
-	// æ€»æ˜¯è¢«è‡ªåŠ¨è¿žæŽ¥è°ƒç”¨å¥½å‡ æ¬¡ï¼Œä¸ºä»€ä¹ˆ ï¼Ÿ
+	// ×ÜÊÇ±»×Ô¶¯Á¬½Óµ÷ÓÃºÃ¼¸´Î£¬ÎªÊ²Ã´ £¿
 	printf("NameOwnerChanged: name=%s, oldOwner=%s, newOwner=%s\n", busName, previousOwner ? previousOwner : "<none>",
 		newOwner ? newOwner : "<none>");
 	if (newOwner == NULL) {
@@ -65,4 +64,3 @@ void MyBusListener::BusDisconnected()
 {
 
 }
-

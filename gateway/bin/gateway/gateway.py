@@ -2,7 +2,7 @@
 import random
 import time
 import sys
-import re
+
 import restful
 import init
 import common
@@ -12,12 +12,12 @@ class WrtGateway:
 	# class varaiable
 	s_hwid = ''
 	s_mwid = ''
+	s_first_time_add_dev = False
 
-	def __init__(self,alias,mail):
+	def __init__(self,mail):
 		self.hwid = ''
 		self.mwid = ''
 		self.mail = mail
-		self.alias = alias
 		
 	def reg_hwid(self):
 		# register hardware id
@@ -91,11 +91,11 @@ class WrtGateway:
 			# write default device '00' into the file
 			#common.wr_settings('00','',2)
 			
-	def update_id_info(self):
+	def update_id_info(self,alias):
 		body = '<IDInfo Name="标识信息"><GWName Name="网关名称">gateway</GWName>\
-			<GWAlias Name="网关别名">' + str(self.alias) + '</GWAlias></IDInfo>'
+			<GWAlias Name="网关别名">' + str(alias) + '</GWAlias></IDInfo>'
   		header = {'Content-type':'text/xml'}
-		#print '\nupdating gateway id info...'
+		print 'updating gateway alias to "' + str(alias) + '"'
 
 		ret = restful.method_post(init.hostandport + '/WIFPa/UpdateIDInfo/' + 
 			self.mwid + '?lang=zh',body,header)
@@ -121,6 +121,7 @@ class WrtGateway:
 			common.wr_settings('0','',2)
 			
 	@staticmethod
+	# Note:if there're no any devices on platform, add_dev call then would fail !!!
 	def add_dev():
 		# no res default, and no need to give devid by yourself
 		body = common.rd_prop('cfg/dev_property.xml')
@@ -134,6 +135,10 @@ class WrtGateway:
 			sys.exit(-1)
 		print 'devid:' + newdevid + ' newly added'
 		#common.wr_settings(newdevid,'',2)
+		WrtGateway.s_first_time_add_dev = True
+		if WrtGateway.s_first_time_add_dev:
+			#WrtGateway.del_dev('00')
+			pass
 		
 		return newdevid
 	
@@ -149,15 +154,13 @@ class WrtGateway:
 			print 'delete devid:' + devid + ' ok'
 		
 	@staticmethod	
-	def add_res(devid,res_type):
-		body_init = common.rd_prop('cfg/res_property.xml')
-		strinfo=re.compile('type')
-		body=strinfo.sub(res_type,body_init)
+	def add_res(devid):
+		body = common.rd_prop('cfg/res_property.xml')
 		header = {'Content-type':'text/xml'}
 		print '\nadd resource...'	
 		ret = restful.method_post(init.url_addRes + '/' + WrtGateway.s_mwid + '?devid=' + devid,body,header)
 		newresid = ret.split('>')[2].split('<')[0]
-		
+
 		if newresid == 'false':
 			print 'add resource failed'
 			sys.exit(-1)
@@ -190,6 +193,14 @@ class WrtGateway:
 
 		if ret.split('>')[2].split('<')[0] == 'true':
 			print '\nupload sensor data ' + str(data) + ' for resid ' + str(resid) + ' ok'
+			
+	@staticmethod
+	def upload_image(resid,data):
+		header = {'Content-type':'image/jpeg'}
+		ret = restful.method_post(init.url_camera + '/' + WrtGateway.s_mwid + '?ResID' + str(resid),
+			data,header)
+		print ret
+
 
 	def get_sensordata(self,resid):
 		ret = method_get(url_sensorData + '/' + self.mwid + '?ResourceID=' + str(resid))

@@ -15,7 +15,7 @@ ServiceBusAttachment::ServiceBusAttachment(const char* appname,bool f):BusAttach
 
 void ServiceBusAttachment::advertiseService(const char* serviceName,const TransportMask mask,MyBusListener& busListener)
 {
-	// å‘å¸ƒæœåŠ¡ä¸‰æ­¥éª¤
+	// ·¢²¼·þÎñÈý²½Öè
 	uint32_t f = DBUS_NAME_FLAG_DO_NOT_QUEUE;
 	requestName(serviceName,f);
 	createSession(mask,busListener);
@@ -30,13 +30,14 @@ void ServiceBusAttachment::createInterface(const char* intfName)
 	if (ER_OK == status) {
 		//intf->AddSignal("sig_test", "(sq(sqq))qa(qq)",  "arg1,arg2,arg3", 0);
 		//intf->AddSignal("sig_test","(sqaq)aq","arg1,arg2",0);
-		intf->AddSignal("sig_test","s","arg1",0);
+		intf->AddSignal("sig_dev_prop","s","arg1",0);
 
 		//intf->AddSignal("sig_resdata","a(sqd)","arg1",0);
 		intf->AddSignal("sig_resdata","s","arg1",0);
+		intf->AddSignal("sig_pic","say","name,data",0);
 
 
-		intf->AddMethod("dev_prop","s",NULL,"inStr",0);//å¤å®—æµ·æ·»åŠ æ–¹æ³•
+		intf->AddMethod("dev_prop","s",NULL,"inStr",0);//¹Å×Úº£Ìí¼Ó·½·¨
 		intf->AddMethod("res_data","s",NULL,"inStr",0);
 
 		intf->Activate();
@@ -50,7 +51,7 @@ QStatus ServiceBusAttachment::requestName(const char* serviceName,uint32_t flag)
 	QStatus status = servicebus->RequestName(serviceName, flag);
 
 	if (ER_OK == status) {
-		printf("service '%s' request ok\n",serviceName);
+		printf("\nservice '%s' request ok\n",serviceName);
 	}
 	else {
 		printf("RequestName('%s') failed (status=%s).\n",serviceName, QCC_StatusText(status));

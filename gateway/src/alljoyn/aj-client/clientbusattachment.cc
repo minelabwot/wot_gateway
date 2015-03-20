@@ -22,12 +22,13 @@ void ClientBusAttachment::createInterface(const char* intfName)
     QStatus status = CreateInterface(intfName, intf);
 
     if (ER_OK == status) {
-        //intf->AddSignal("sig_test", "(sq(sqq))qa(qq)",  "arg1,arg2,arg3", 0);//è¿™æ˜¯æˆåŠŸçš„èŒƒä¾‹ï¼Œä¿ç•™å‚è€ƒ
-		//intf->AddSignal("sig_test","(sqaq)aq","arg1,arg2",0);//è®¾å¤‡å±žæ€§ä¿¡å·
-		intf->AddSignal("sig_test","s","arg1",0);
+        //intf->AddSignal("sig_test", "(sq(sqq))qa(qq)",  "arg1,arg2,arg3", 0);//ÕâÊÇ³É¹¦µÄ·¶Àý£¬±£Áô²Î¿¼
+		//intf->AddSignal("sig_test","(sqaq)aq","arg1,arg2",0);//Éè±¸ÊôÐÔÐÅºÅ
+		intf->AddSignal("sig_dev_prop","s","arg1",0);
 
 		//intf->AddSignal("sig_resdata","a(sqd)","arg1",0);
 		intf->AddSignal("sig_resdata","s","arg1",0);
+		intf->AddSignal("sig_pic","say","name,data",0);//´«Í¼Æ¬ÐÅºÅ
 
         intf->Activate();
     } else {
@@ -57,11 +58,9 @@ void ClientBusAttachment::connectBusAttachment(void)
 {
     QStatus status = Connect();
 
-    if (ER_OK == status) {
-        printf("Connect to '%s' succeeded.\n", this->GetConnectSpec().c_str());
-	} else {
-		printf("Failed to connect to '%s' (%s).\n", this->GetConnectSpec().c_str(), QCC_StatusText(status));
-	}
+    if (ER_OK != status) {
+        cout << "Failed to connect to " << clientbus->GetConnectSpec().c_str() << endl;
+    }
 }
 
 /** Begin discovery on the well-known name of the service to be called, report the result to
@@ -72,7 +71,7 @@ void ClientBusAttachment::findAdvertisedName(void)
     QStatus status = FindAdvertisedName(SERVICE_NAME);
 
     if (status != ER_OK) {
-       printf("FindAdvertisedName ('%s') failed (%s).\n", SERVICE_NAME, QCC_StatusText(status));
+       cout << "FindAdvertisedName failed\n";
     } 
 }
 

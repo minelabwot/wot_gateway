@@ -1,8 +1,8 @@
 /*
-	å½“å¯åŠ¨ç¬¬äºŒä¸ªå®¢æˆ·æ—¶ï¼Œä¹ŸåŠ å…¥äº†å®¢æˆ·1çš„session idä¸­äº†ï¼Œä¸ºä»€ä¹ˆ ï¼Ÿ
-	æ€ä¹ˆè®©ä¸¤ä¸ªå®¢æˆ·åœ¨ä¸åŒçš„sessionä¸­ï¼Ÿ
+	µ±Æô¶¯µÚ¶ş¸ö¿Í»§Ê±£¬Ò²¼ÓÈëÁË¿Í»§1µÄsession idÖĞÁË£¬ÎªÊ²Ã´ £¿
+	ÔõÃ´ÈÃÁ½¸ö¿Í»§ÔÚ²»Í¬µÄsessionÖĞ£¿
 
-	æ•°æ®ç±»å‹æ—¶ï¼Œä»€ä¹ˆæ—¶å€™ç”¨charï¼Œä»€ä¹ˆæ—¶å€™ç”¨unsigned char ?
+	Êı¾İÀàĞÍÊ±£¬Ê²Ã´Ê±ºòÓÃchar£¬Ê²Ã´Ê±ºòÓÃunsigned char ?
 
 */
 
@@ -31,15 +31,22 @@ MyBusListener busListener;
 const char* OBJ_PATH = "/";
 const char* SERVICE_NAME = "org.service1";
 const char* INTERFACE_NAME = "org.intf1";
-SessionPort PORT = 250; // ä¸èƒ½åŠ constä¿®é¥°ï¼Œå¦åˆ™åœ¨mybuslistnerä¸­externæ—¶ï¼Œé“¾æ¥å‡ºé”™
+SessionPort PORT = 250; // ²»ÄÜ¼ÓconstĞŞÊÎ£¬·ñÔòÔÚmybuslistnerÖĞexternÊ±£¬Á´½Ó³ö´í
 
 ajn::SessionId sessionId;
 volatile sig_atomic_t g_joinComplete = false;
 
-char macstr[13] = {'\0'};//macåœ°å€
+char macstr[13] = {'\0'};//macµØÖ·
 
 char dev_prop[1024] = "{\"Mac_address\":\"";
 char** _resid;
+
+struct res
+{
+	int resnum;
+	int type;
+};	
+struct res *pRes,*root;
 
 void printHelp()
 {
@@ -92,13 +99,68 @@ void handle_prompt(int argc,char** argv)
 
 }
 
+void handlePrompt(int argc,char** argv)
+{
+	char tmp[64] = "";
+	sprintf(tmp,"%d",argc-1);
+
+	if (argc < 2) {
+		printf("usage:ajtest_client {resnum:restype} ...\n");
+		exit(0);
+	}
+	pRes = (struct res *)malloc(sizeof(struct res) * (argc-1));
+	root = pRes;
+
+	if (pRes == NULL) {
+		printf("malloc failed\n");
+		return;
+	}
+
+	strcat(dev_prop,macstr);
+	strcat(dev_prop,"\",\"Res_num\":");
+	strcat(dev_prop,tmp);
+	strcat(dev_prop,",\"flags\":0,\"Res\":[");
+
+	for (int i=1; i<argc; i++) {
+		char restmp[4];
+		
+		char *p1 = strchr(argv[i],':');
+		int len = p1-argv[i];
+		strncpy(restmp,argv[i],len);
+		restmp[len] = '\0';
+
+		pRes->resnum = atoi(restmp);
+		strcpy(tmp,"{\"Res_name\":\"\",\"Res_port\":");
+		strcat(tmp,restmp);
+		strcpy(restmp,p1+1);
+		pRes->type = atoi(restmp);
+
+		strcat(tmp,",\"Res_unit\":\"\",\"Res_type\":");
+		strcat(tmp,restmp);
+		strcat(tmp,"}");
+
+		if (i != argc-1) {
+			strcat(tmp,",");
+			strcat(dev_prop,tmp);	
+		}
+		else {
+			strcat(dev_prop,tmp);
+		}
+		++pRes;
+	}
+	strcat(dev_prop,"]}");
+	printf("dev_prop: %s\n",dev_prop);
+}
+
 int main(int argc, char** argv)
 {
-	handle_prompt(argc,argv);
+	get_mac(macstr);
+
+	handlePrompt(argc,argv);
 
 	printHelp();
 
-	printf("%s\n",ajn::GetBuildInfo());
+	//printf("%s\n",ajn::GetBuildInfo());
 	QStatus status = ER_OK;
 
 	clientbus = new ClientBusAttachment("myapp",true);
@@ -121,18 +183,22 @@ int main(int argc, char** argv)
 
 	double val;
 	while (ER_OK == status) {
-		for (int i=0; i<argc-2; i++) {
+		for (int i=0; i<argc-1; i++) {
 			val = rand() % 100;
-			obj->sendResdataSignal_2(atoi(*(_resid - (argc-2-i))),val);
+			if (root[i].type == 0){
+				obj->sendResdataSignal(root[i].resnum,val);
+			}
+			if (root[i].type == 1)
+				obj->sendPicSignal("camera.jpg");
 		}
 		
 		printf("\n");
 		
-		//ä¸€ä¸ªè®¾å¤‡çš„æ‰€æœ‰èµ„æºæ•°æ®å‘é€ä¸€æ¬¡åï¼Œå®šæ—¶ä¸€æ®µæ—¶é—´å†å‘é€
+		//Ò»¸öÉè±¸µÄËùÓĞ×ÊÔ´Êı¾İ·¢ËÍÒ»´Îºó£¬¶¨Ê±Ò»¶ÎÊ±¼äÔÙ·¢ËÍ
 #ifdef _WIN32
-		Sleep(1000*40);
-#else 
-		sleep(40);
+		Sleep(1000*30);
+#else
+		sleep(30);
 #endif
 	}
     return 0;

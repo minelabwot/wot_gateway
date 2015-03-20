@@ -1,6 +1,7 @@
 #include "mybusobject.h"
 #include "common.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -22,14 +23,9 @@ MyBusObject::MyBusObject(BusAttachment& bus, const char* path) : BusObject(path)
 	AddInterface(*intf);
 
 	/* Store the Chat signal member away so it can be quickly looked up when signals are sent */
-	testSigMember = intf->GetMember("sig_test");
+	testSigMember = intf->GetMember("sig_dev_prop");
 	resDataSigMember = intf->GetMember("sig_resdata");
-	
-	/*
-	status =  bus.RegisterSignalHandler(this,
-		static_cast<MessageReceiver::SignalHandler>(&MyBusObject::testSigHandler),
-		testSigMember,
-		NULL);*/
+	picDataSigMember = intf->GetMember("sig_pic");
 }
 
 /*
@@ -45,14 +41,14 @@ QStatus MyBusObject::sendTestSignal(const char* msg)
 
 	MsgArg arg[2];
 
-	arg[0].Set("(sqaq)",thisdev);//å¦‚æžœå†™ä¸ŠåŽé¢çš„aqï¼Œåˆ™ä¼ è¿‡åŽ»çš„structçš„å…ƒç´ æ•°ç›®å°±æ˜¯3ï¼Œä¹Ÿå¯ä»¥æ²¡æœ‰aqï¼Œåˆ™ä¸º2
+	arg[0].Set("(sqaq)",thisdev);//Èç¹ûÐ´ÉÏºóÃæµÄaq£¬Ôò´«¹ýÈ¥µÄstructµÄÔªËØÊýÄ¿¾ÍÊÇ3£¬Ò²¿ÉÒÔÃ»ÓÐaq£¬ÔòÎª2
 
-	int n = CUR_RES_NUM;//å½“å‰çš„èµ„æºæ•°ç›®
+	int n = CUR_RES_NUM;//µ±Ç°µÄ×ÊÔ´ÊýÄ¿
 
 	arg[1].Set("aq",n,thisdev.res);
 
 	
-	//æˆåŠŸèŒƒä¾‹
+	//³É¹¦·¶Àý
 	MsgArg arg[3];
 	arg[0].Set("(sq(sqq))",thisdev);
 	arg[1].Set("q",thisdev.res[0].type);
@@ -61,7 +57,7 @@ QStatus MyBusObject::sendTestSignal(const char* msg)
 	tmp[0].Set("(qq)",test[0]);
 	tmp[1].Set("(qq)",test[1]);
 	tmp[2].Set("(qq)",test[2]);
-	arg[2].Set("a(qq)",sizeof(test)/sizeof(struct A),tmp);//ç¬¬äºŒä¸ªå‚æ•°å¿…é¡»ç»™
+	arg[2].Set("a(qq)",sizeof(test)/sizeof(struct A),tmp);//µÚ¶þ¸ö²ÎÊý±ØÐë¸ø
 	
 
 	if (0 == g_sessionId) {
@@ -71,7 +67,7 @@ QStatus MyBusObject::sendTestSignal(const char* msg)
 	return Signal(NULL, g_sessionId, *testSigMember, arg,2, 0, 0);
 }
 
-QStatus MyBusObject::sendResdataSignal(uint8_t index)
+QStatus MyBusObject::sendResdataSignal_2(uint8_t index)
 {
 	MsgArg arg;
 
@@ -90,11 +86,11 @@ QStatus MyBusObject::sendResdataSignal(uint8_t index)
 
 */
 
-QStatus MyBusObject::sendTestSignal_2(const char* msg) 
+QStatus MyBusObject::sendDevPropSignal(const char* msg) 
 {
 	MsgArg arg;
 
-	// å°†è®¾å¤‡å±žæ€§å°è£…æˆjsonæ ¼å¼å­—ç¬¦ä¸²
+	// ½«Éè±¸ÊôÐÔ·â×°³Éjson¸ñÊ½×Ö·û´®
 	/*
 	char tmp[1024] = "{\"Mac_address\":\"";
 	strcat(tmp,macstr);
@@ -115,12 +111,12 @@ QStatus MyBusObject::sendTestSignal_2(const char* msg)
 	return Signal(NULL, g_sessionId, *testSigMember, &arg,1, 0, 0);
 }
 
-QStatus MyBusObject::sendResdataSignal_2(uint8_t __resid,double val)
+QStatus MyBusObject::sendResdataSignal(uint8_t __resid,double val)
 {
 	MsgArg arg;
 	char tmp[32];
 
-	// æ•°æ®ä¿¡æ¯å°è£…æˆjsonæ ¼å¼å­—ç¬¦ä¸²
+	// Êý¾ÝÐÅÏ¢·â×°³Éjson¸ñÊ½×Ö·û´®
 
 	char resdata[1024] = "{\"Mac_addr\":\"";
 	strcat(resdata,macstr);
@@ -143,4 +139,57 @@ QStatus MyBusObject::sendResdataSignal_2(uint8_t __resid,double val)
 
 	return Signal(NULL, g_sessionId, *resDataSigMember, &arg,1, 0, 0);
 }
+
+QStatus MyBusObject::sendPicSignal(const char* msg)
+{
+	char* buf = new char[ALLJOYN_MAX_ARRAY_LEN];
+	memset(buf,0,ALLJOYN_MAX_ARRAY_LEN);
+
+	long l,length;
+	ifstream inputStream(msg, ios::in | ios::binary);
+
+	if (inputStream.is_open()) {
+		MsgArg args[2];
+		QStatus status = ER_OK;
+		const uint8_t flags = ALLJOYN_FLAG_GLOBAL_BROADCAST;
+
+		l=inputStream.tellg();
+		inputStream.seekg(0,ios::end);
+		length=inputStream.tellg();
+
+		inputStream.seekg(0);
+
+		while (length > 0) {
+			//Êý×é×î´ó³¤¶È£ºALLJOYN_MAX_ARRAY_LEN
+
+			long bufferLength = ALLJOYN_MAX_ARRAY_LEN;
+
+			if (length > (filebuf::pos_type)ALLJOYN_MAX_ARRAY_LEN) {
+				length -= (filebuf::pos_type)ALLJOYN_MAX_ARRAY_LEN;
+			} else {
+				bufferLength = length;
+				length = 0;
+			}
+
+			inputStream.read(buf, bufferLength);
+			//printf("buf:%s\n",buf);//buf½ÓÊÕ¿ÉÄÜÎª¶þ½øÖÆ£¬²»¿É´òÓ¡
+
+			args[0].Set("s", msg);
+			args[1].Set("ay", bufferLength, buf);
+
+			status = Signal(NULL, g_sessionId, *picDataSigMember, args, 2, 0, flags);
+		}
+
+		args[0].Set("s", msg);
+		args[1].Set("ay", 0, NULL);//Õâ¸öÊÇ±íÃ÷´«Êä½áÊø
+		status = Signal(NULL, g_sessionId, *picDataSigMember, args, 2, 0, flags);
+		printf("Sent end of file\n");
+	} else {
+		printf("The file doesn't exist or the permissions is stopping the app from opening the file.\n");
+	}
+
+	delete [] buf;
+	return ER_OK;
+}
+
 

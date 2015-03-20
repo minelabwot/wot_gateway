@@ -1,3 +1,10 @@
+/*
+
+	1¡¢×÷AllJoyn·şÎñ¶Ë£¬ÔËĞĞÔÚPC»òopenwrtÉÏ£¬½ÓÊÕÀ´×ÔAllJoyn¿Í»§¶ËµÄÇëÇó
+	2¡¢Í¬Ê±×÷socket¿Í»§¶Ë£¬ÏòPython·şÎñ¶Ë·¢ËÍJSON¸ñÊ½µÄÉè±¸ÅäÖÃºÍ×ÊÔ´Êı¾İ
+
+ */
+
 #include <cstdio>
 #include <alljoyn/version.h>
 #include "common.h"
@@ -5,7 +12,8 @@
 #include "mybuslistener.h"
 #include "servicebusattachment.h"
 
-// å®šä¹‰å…¨å±€å˜é‡
+
+// ¶¨ÒåÈ«¾Ö±äÁ¿
 MyBusObject* s_obj = NULL;
 ServiceBusAttachment* servicebus = NULL;
 MyBusListener busListener;
@@ -14,8 +22,9 @@ const char* OBJ_PATH = "/";
 const char* SERVICE_NAME = "org.service1";
 const char* INTERFACE_NAME = "org.intf1";
 
-int fd_cli;
+int fd_dev_prop;
 int fd_resdata;
+int fd_picdata;
 
 void printHelp()
 {
@@ -34,57 +43,39 @@ void printHelp()
 const char* host;
 int port;
 
-void parse_prompt(int argc,char** argv)
-{
-	if (argc < 2) {
-		printf("arg error\nclient.exe [host] {port}\n");
-		exit(1);
-	}
-	host = argv[1];
-	port = 0;
-
-	if (argc == 3)
-		port = atoi(argv[2]);
-
-}
+char *pData;
 
 int main(int argc, char** argv)
 {	
 	printHelp();
-
-	parse_prompt(argc,argv);
+	pData = (char*)malloc(600*1024);
+	if (pData == NULL) {
+		printf("malloc pData failed\n");
+	}
+	memset(pData,0,600*1024);
 
 #ifdef _WIN32
-	init_winsock();//å¿…é¡»åˆä½¿åŒ–
+	init_winsock();//±ØĞë³õÊ¹»¯
 #endif
 
-	if (port == 0) {
-		create_client_sock(&fd_cli,host,SOCKET_DEV_PROP_PORT);//è¿æ¥pythonæœåŠ¡ç«¯
-		create_client_sock(&fd_resdata,host,SOCKET_RES_DATA_PORT);
-	}
-	else {
-		create_client_sock(&fd_cli,host,port);//è¿æ¥pythonæœåŠ¡ç«¯
-		create_client_sock(&fd_resdata,host,port);
-	}
-
+	//Á¬½Ópython·şÎñ¶Ë
+	create_client_sock(&fd_dev_prop,LOCALNAME,SOCKET_DEV_PROP_PORT);//Éè±¸ÊôĞÔ¶Ë
+	create_client_sock(&fd_resdata,LOCALNAME,SOCKET_RES_DATA_PORT);//×ÊÔ´Êı¾İ¶Ë
+	create_client_sock(&fd_picdata,LOCALNAME,SOCKET_PIC_DATA_PORT);//ÉãÏñÍ·socket¶Ë
+	
     QStatus status = ER_OK;
-    printf("%s\n",ajn::GetBuildInfo());
 
 	servicebus = new ServiceBusAttachment("myapp",true);
 	servicebus->createInterface(INTERFACE_NAME);
-   	servicebus->RegisterBusListener(busListener);
+
+   	//servicebus->RegisterBusListener(busListener);//¼ÓÈëSessionMemberRemovedÖ®ºó¾Í²»ÄÜÔÚÕâÀï×¢²á¼àÌıÁË
+
     servicebus->Start();
-
-    MyBusObject myobj(*servicebus, OBJ_PATH);
-    s_obj = &myobj;
-
+	
+    s_obj = new MyBusObject(*servicebus, OBJ_PATH);
     servicebus->RegisterBusObject(*s_obj);
-    status = servicebus->Connect();
-    if (ER_OK == status) {
-        printf("Connect to '%s' succeeded.\n", servicebus->GetConnectSpec().c_str());
-	} else {
-		printf("Failed to connect to '%s' (%s).\n", servicebus->GetConnectSpec().c_str(), QCC_StatusText(status));
-	}
+
+    servicebus->Connect();
 
 	const TransportMask SERVICE_TRANSPORT_TYPE = TRANSPORT_ANY;
 	servicebus->advertiseService(SERVICE_NAME,SERVICE_TRANSPORT_TYPE,busListener);
@@ -96,8 +87,10 @@ int main(int argc, char** argv)
 #else
 		sleep(1);
 #endif
-
 	}
+
+	delete s_obj;
+	delete servicebus;
     return (int) status;
 }
 

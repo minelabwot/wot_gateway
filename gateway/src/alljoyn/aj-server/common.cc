@@ -2,17 +2,15 @@
 #include <WinSock2.h>
 #include <ws2tcpip.h>
 #else
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <sys/types.h>
-#include <netdb.h>
 #include <arpa/inet.h>
 #endif
 
 #include <cstdio>
 #include "common.h"
 
-#ifdef _WIN32
 void init_winsock()
 {
 	int ret;
@@ -24,9 +22,8 @@ void init_winsock()
 		exit(-1);
 	}
 }
-#endif
 
-/*
+#ifdef _WIN32
 IN_ADDR get_addr_info(const char* hostname)
 {
 	int ret;
@@ -35,7 +32,7 @@ IN_ADDR get_addr_info(const char* hostname)
 	struct addrinfo *ans,*cur;
 
 	//ZeroMemory(&hint, sizeof(hint));
-	memset(&hint,0,sizeof(hint));//åˆ©äºè·¨å¹³å°ï¼Œä¸”å¿…é¡»æ¸…0
+	memset(&hint,0,sizeof(hint));//ÀûÓÚ¿çÆ½Ì¨£¬ÇÒ±ØĞëÇå0
 	hint.ai_family = AF_INET;
 	hint.ai_socktype = SOCK_STREAM;
 
@@ -52,22 +49,21 @@ IN_ADDR get_addr_info(const char* hostname)
 		printf("%s\n",ipstr);
 	}
 	
-	//å‡å®šè¿”å›çš„æ˜¯ç¬¬ä¸€ä¸ªåœ°å€ç»“æ„
+	//¼Ù¶¨·µ»ØµÄÊÇµÚÒ»¸öµØÖ·½á¹¹
 	return ((struct sockaddr_in*)ans->ai_addr)->sin_addr;
 }
-*/
 
-
+#endif
 /*
-	fd_cli:å®¢æˆ·å¥—æ¥å­—æè¿°ç¬¦æŒ‡é’ˆ
-	hostip:æ¬²è¿æ¥çš„è¿œç¨‹çš„ä¸»æœºip
+	fd_cli:¿Í»§Ì×½Ó×ÖÃèÊö·ûÖ¸Õë
+	hostip:ÓûÁ¬½ÓµÄÔ¶³ÌµÄÖ÷»úip
 */
 void create_client_sock(int* fd_cli,const char* hostip,int port)
 {
-	struct sockaddr_in cliaddr;//å®šä¹‰ä¸èƒ½æ”¾åé¢
+	struct sockaddr_in cliaddr;//¶¨Òå²»ÄÜ·ÅºóÃæ
 	int ret;
 
-	/* æ­¤å‡½æ•°å·²ç»è¿‡æ—¶
+	/* ´Ëº¯ÊıÒÑ¾­¹ıÊ±
 	host = gethostbyname("api.yeelink.com");
 	if( host == NULL ) {
 		printf("DNS failed\r\n");
@@ -86,7 +82,7 @@ void create_client_sock(int* fd_cli,const char* hostip,int port)
 
 	ret = connect(*fd_cli, (struct sockaddr *)&cliaddr, sizeof(struct sockaddr));
 	if( ret == 0 ){
-		printf("connect %s:%d ok\n",hostip,port);
+		printf("connect ok\n");
 	}
 	else {
 		printf("connect to python server socket failed\n");

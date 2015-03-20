@@ -42,7 +42,7 @@ def  dev_del(mac):
 					if len(lines)==3:
 						if lines[0] != mac:
 							g.write(rLine)
-	shutil.move('./cfg/mac_resID_resPlat_map.cfg.tmp', './cfg/mac_resID_resPlat.cfg')
+	shutil.move('./cfg/mac_resID_resPlat_map.cfg.tmp', './cfg/mac_resID_resPlat_map.cfg')
 
 handler = logging.handlers.RotatingFileHandler('log/register.log', maxBytes = 1024*1024, backupCount = 5) # 实例化handler   
 fmt = '%(asctime)s - %(filename)s:%(lineno)s - %(name)s - %(message)s'  
@@ -65,7 +65,6 @@ class Register_Del(threading.Thread):
 		self.thread_stop = False
 		self.port = port
 		self.hostname = hostname
-
 
 		self.read_config()
 
@@ -114,7 +113,6 @@ class Register_Del(threading.Thread):
 		
 		while not self.thread_stop:
 			while inputs:
-				logger.info("waiting for next event")
 				readable , writable , exceptional = select.select(inputs, outputs, inputs, timeout)
 				 #When timeout reached , select return three empty lists
 				if not (readable or writable or exceptional):
@@ -125,7 +123,6 @@ class Register_Del(threading.Thread):
 						#A "readable" socket is ready to accept a connection
 						client_sock, client_address = s.accept()
 						print '[RegisterThread] connection from',client_address
-						logger.info("connection from "+str(client_address))
 						
 						# select generally matches with non-block socket
 						client_sock.setblocking(0)
@@ -133,6 +130,7 @@ class Register_Del(threading.Thread):
 					else:
 						buf = s.recv(1024)
 						if buf:
+							#print 'buf:',buf
 							result=json.loads(buf)
 							if result['flags']==0:	
 								if result['Mac_address'] not in Register_Del.mac_dev_map:
@@ -145,8 +143,7 @@ class Register_Del(threading.Thread):
 									for i in range(res_num):
 										# if add device, then res must be added !!!
 										#if result['Res'][i]['Res_port'] not in Register_Del.resLocal_resPlat_map:
-										res_type=result['Res'][i]['Res_type']
-										res_id=WrtGateway.add_res(dev_id,res_type)
+										res_id=WrtGateway.add_res(dev_id)
 										Register_Del.mac_resID_resPlat_map[result["Mac_address"]][str(result['Res'][i]['Res_port'])]=res_id
 										mac_resID_resPlat_write_to_cfg(result["Mac_address"],result['Res'][i]['Res_port'],res_id)
 
@@ -156,8 +153,7 @@ class Register_Del(threading.Thread):
 									dev_id=Register_Del.mac_dev_map[result['Mac_address']]
 									for i in range(res_num):
 										if str(result['Res'][i]['Res_port']) not in Register_Del.mac_resID_resPlat_map[result["Mac_address"]]:
-											res_type=result['Res'][i]['Res_type']
-											res_id=WrtGateway.add_res(dev_id,res_type)
+											res_id=WrtGateway.add_res(dev_id)
 
 											Register_Del.mac_resID_resPlat_map[result["Mac_address"]][str(result['Res'][i]['Res_port'])]=res_id
 											mac_resID_resPlat_write_to_cfg(result["Mac_address"],result['Res'][i]['Res_port'],res_id)
@@ -171,7 +167,6 @@ class Register_Del(threading.Thread):
 								dev_del(result["Mac_address"])
 								del Register_Del.mac_dev_map[result["Mac_address"]]
 								del Register_Del.mac_resID_resPlat_map[result["Mac_address"]]
-								
 															
 							print '[RegisterThread] Res map:',Register_Del.mac_resID_resPlat_map
 						else:

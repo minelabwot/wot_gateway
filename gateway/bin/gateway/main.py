@@ -9,6 +9,7 @@ from register import Register_Del
 from res_data_th import ResDataThread
 from heartbeat import HBThread
 from hb_recv_th import HBRecvThread
+from camera_thread import CameraThread
 
 F_DEL_MW = False
 F_UPT_MW = False
@@ -57,11 +58,9 @@ if __name__ == '__main__':
 	alias = json_main_cfg['alias']
 	hb_interval = json_main_cfg['hb_interval']
 	hb_port = json_main_cfg['hb_port']
-	remote_ip = json_main_cfg['remote_ip']
-	remote_udpport = json_main_cfg['remote_udpport']
 	
 	# mail is given
-	gw = WrtGateway(alias,mail)
+	gw = WrtGateway(mail)
 
 	# if hwid exists,then it will fail
 	gw.reg_hwid()
@@ -73,31 +72,32 @@ if __name__ == '__main__':
 		gw.del_mw()
 		sys.exit(0)
 
+	# update property of gateway
 	gw.update_mw(F_UPT_MW)
 
 	#modify gateway alias if you like
-	gw.update_id_info()
+	gw.update_id_info(alias)
 
 	th_reg=Register_Del(1,hostip,dev_port)
 
 	th_resdata = ResDataThread()
 	th_resdata.init_socket(hostip)
 
-	#th_hbrecv = HBRecvThread(hb_port)
-	#th_hbrecv.init_socket()
+	th_hb = HBThread(hb_interval,hb_port)
 
-	th_hb = HBThread(hb_interval,remote_ip,remote_udpport)
+	th_camera = CameraThread()
+	th_camera.init_socket(hostip)
 
 	# start threads
 	th_reg.start()
 	th_resdata.start()
-	#th_hbrecv.start()
 	th_hb.start()
+	th_camera.start()
 
 	print '[main thread] waiting...'
 	th_reg.join()
 	th_resdata.join()
 	th_hb.join()
-	#th_hbrecv.join()
+	th_camera.join()
 
 	print 'done'

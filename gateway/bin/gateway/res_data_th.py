@@ -47,9 +47,12 @@ class ResDataThread(threading.Thread):
 				if len(Register_Del.mac_resID_resPlat_map) != 0:
 					print '\n[ResDataThread] data:',data
 
-					jsondata = json.loads(data)
-					print '[ResDataThread] Res map:',Register_Del.mac_resID_resPlat_map
-					
-					if jsondata['Mac_addr'] in Register_Del.mac_resID_resPlat_map:
-						if str(jsondata['Res_port']) in Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']]:
-							gateway.WrtGateway.upload_data(Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']][str(jsondata['Res_port'])],jsondata['Res_val'])
+					try:
+						jsondata = json.loads(data)
+						print '[ResDataThread] Res map:',Register_Del.mac_resID_resPlat_map
+						
+						if jsondata['Mac_addr'] in Register_Del.mac_resID_resPlat_map:
+							if str(jsondata['Res_port']) in Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']]:
+								gateway.WrtGateway.upload_data(Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']][str(jsondata['Res_port'])],jsondata['Res_val'])
+					except:
+						pass

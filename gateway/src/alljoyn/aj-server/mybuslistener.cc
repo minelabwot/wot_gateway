@@ -1,3 +1,10 @@
+#ifdef _WIN32
+#include <WinSock2.h>
+#else
+#include <sys/socket.h>
+#include <sys/types.h>
+#endif
+
 #include "mybuslistener.h"
 #include "servicebusattachment.h"
 #include <iostream>
@@ -7,66 +14,70 @@
 using namespace std;
 
 extern ServiceBusAttachment* servicebus;
+extern string DevProp;
+extern int fd_dev_prop;
+
 SessionId g_sessionId;
-
-const char* g_joiner;
-
-// ä»¥ä¸‹ä¸‰å‡½æ•°åœ¨linuxä¸‹å¹¶æœªçœŸæ­£è°ƒç”¨ ï¼Ÿï¼Ÿï¼Ÿ
 
 void MyBusListener::NameOwnerChanged(const char* busName, const char* previousOwner, const char* newOwner)
 {
-	// æ€»æ˜¯è¢«è‡ªåŠ¨è¿žæŽ¥è°ƒç”¨å¥½å‡ æ¬¡ï¼Œä¸ºä»€ä¹ˆ ï¼Ÿ
+	// ×ÜÊÇ±»×Ô¶¯Á¬½Óµ÷ÓÃºÃ¼¸´Î£¬ÎªÊ²Ã´ £¿
 
 	cout << "NameOwnerChanged: name=" << busName << ", oldOwner=" << (previousOwner ? previousOwner : "<none>") <<
 		", newOwner=" << (newOwner ? newOwner : "<none>") << endl;
 
-	if (previousOwner && !newOwner) {
-		cout << previousOwner << " exited" << endl;
-	}
-	/*
-	cout << g_joiner << "," << previousOwner;
-	if (g_joiner) {
-		cout << g_joiner << previousOwner;
-		if (strcmp(previousOwner,g_joiner) == 0) {
-				cout << "client exited" << endl;
-			}
-	}
-	*/
 }
 
 bool MyBusListener::AcceptSessionJoiner(SessionPort sessionPort, const char* joiner, const SessionOpts& opts)
 {
-	// æœåŠ¡ç«¯è°ƒç”¨
+	// ·þÎñ¶Ëµ÷ÓÃ
 	if (sessionPort != MyNameSpace::PORT) {
 		cout << "Rejecting join attempt on wrong session port" << endl;
 		return false;
 	}
 
-	g_joiner = joiner;
-
-	cout << "\nAccepting join session request from " << joiner << endl;
+	cout << "[AcceptSessionJoiner] Accepting join session request from " << joiner << endl;
 	return true;
 }
 
 void MyBusListener::SessionJoined(SessionPort sessionPort, SessionId id, const char* joiner)
 {
 	g_sessionId = id;
-	cout << "Session Joined, sessionId:" << g_sessionId << endl;
+	cout << "[SessionJoined] Session Joined, sessionId:" << g_sessionId << endl;
 
 	servicebus->EnableConcurrentCallbacks();
-	uint32_t timeout = 20;
-	QStatus status = servicebus->SetLinkTimeout(g_sessionId, timeout);
+
+	QStatus status = servicebus->SetSessionListener(id, this);
+
+	uint32_t timeout = 40;
+	status = servicebus->SetLinkTimeout(g_sessionId, timeout);
 	if (ER_OK != status) {
 		QCC_SyncPrintf("Set link timeout failed\n");
 	} 
 }
 
-void MyBusListener::SessionMemberAdded(SessionId sessionId,const char* uniqueName)
+
+void MyBusListener::SessionMemberAdded(SessionId sessionId, const char* uniqueName)
 {
-	printf("%s added\n",uniqueName);
+	printf("[SessionMemberAdded] %s joined session %u\n",uniqueName,sessionId);
 }
 
-void MyBusListener::SessionMemberRemoved(SessionId sessionId,const char* uniqueName)
+
+void MyBusListener::SessionMemberRemoved(SessionId sessionId, const char* uniqueName)
 {
-	printf("%s left\n",uniqueName);
+	printf("[SessionMemberRemoved] %s left session %u\n",uniqueName,sessionId);
+	char dev_left_info[64] = "\0";
+	strncpy(dev_left_info,DevProp.c_str(),(DevProp.find('"',16)+1));//¼ì²âµÚ4¸ö"µÄÎ»ÖÃ
+	//printf("dev_left_info:%s\n",dev_left_info);
+	strcat(dev_left_info,",\"flags\":1}");
+
+#ifdef _WIN32
+	int size = send(fd_dev_prop,dev_left_info,strlen(dev_left_info),0);
+#else
+	//if MSG_NOSIGNAL is not given on Linux,
+	//send call will throw a signal to OS and stop program
+	int size = send(fd_dev_prop,dev_prop,strlen(dev_prop),MSG_NOSIGNAL);
+#endif
 }
+
+

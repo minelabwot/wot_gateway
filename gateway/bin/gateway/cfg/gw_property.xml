@@ -65,18 +65,18 @@
       <LocalZ Name="Z坐标">0</LocalZ>
     </LocalCoordinate>
   </DeployInfo>
-  <DevicesList> 
+  <DevicesList>
     <Device Name="unused" DID="00">
       <DevInfo Name="设备信息">
-      <Vendor Name="制造商">Microduino</Vendor>
-      <Name Name="名称">default</Name>
-      <SerialNumber Name="序列号">default</SerialNumber>
-      <Model Name="型号">default</Model>
-      <Type Name="编号">default</Type>
-      <Power Name="电源">
-        <AC Name="交流供电">无</AC>
-        <DC Name="直流供电">无</DC>
-      </Power>
+        <Vendor Name="制造商">Microduino</Vendor>
+        <Name Name="名称">default</Name>
+        <SerialNumber Name="序列号">default</SerialNumber>
+        <Model Name="型号">default</Model>
+        <Type Name="编号">default</Type>
+        <Power Name="电源">
+          <AC Name="交流供电">无</AC>
+          <DC Name="直流供电">无</DC>
+        </Power>
       </DevInfo>
       <Connections Name="连接信息">
         <Type Name="连接类型">default</Type>
