@@ -198,22 +198,25 @@ int data_analysis(int fd, char readbuff[])
 {
 	int stop_buf = 0;//作为标识符，检测是否存在规定的字符串。
 	printf("start to analysis...\n");
+	char *readbuff_temp;
 	int i = 0, j = 0;
-	if (readbuff[0] == 's'&&readbuff[1] == 't'&&readbuff[2] == 't'&&readbuff[3] == ':')
-    {
+//	if (readbuff[0] == 's'&&readbuff[1] == 't'&&readbuff[2] == 't'&&readbuff[3] == ':')
+    if(strstr(readbuff,"stt:"))
+	{
 		if(strlen(readbuff)>18)
         {
 			stop_buf=0;
-			for (i = 0; i < strlen(readbuff); i++)
+//			for (i = 0; i < strlen(readbuff); i++)
+//			{
+//				if (readbuff[i] == ':' && readbuff[i+1] == 's' && readbuff[i+2] == 't' && readbuff[i+3] == 't')
+			if(strstr(readbuff,":stt"))
 			{
-				if (readbuff[i] == ':' && readbuff[i+1] == 's' && readbuff[i+2] == 't' && readbuff[i+3] == 't')
-				{
-					stop_buf = 1;
-					for(j=i+4;j<strlen(readbuff)+1;j++)
-						readbuff[j] = '\0';
-					break;
-				}
-            }
+				stop_buf = 1;
+//				for(j=i+4;j<strlen(readbuff)+1;j++)
+//					readbuff[j] = '\0';
+				//break;
+			}
+//            }
 			printf("readbuff=%s\n",readbuff);
 			strcpy(buff,readbuff);
             printf("buff=%s\n", buff);
@@ -503,20 +506,20 @@ void data_packaging(int fd,char buff[])
     {
         //进一步封装，以结构体封装
         //判断设备是否已经注册，如果没有注册，会首先进行注册
-        if (mac_add==1)
-        {
-            char buff_temp[100] = "{\"Mac_address\":\"";
-            strcat(buff_temp,mac_address[mac_num_recent]);
-            strcat(buff_temp,"\",\"Res_num\":1,\"flags\":0,\"Res\":[{\"Res_port\":");
-            strcat(buff_temp,res_port[0]);
-            strcat(buff_temp,"}]}");
-            char* ip_add="127.0.0.1";
-            int port_add=8000;
-            
-            clock_synchronized(fd);
-            
-            data_socket(ip_add, port_add, buff_temp);
-        }
+//        if (mac_add==1)
+//        {
+//            char buff_temp[100] = "{\"Mac_address\":\"";
+//            strcat(buff_temp,mac_address[mac_num_recent]);
+//            strcat(buff_temp,"\",\"Res_num\":1,\"flags\":0,\"Res\":[{\"Res_port\":");
+//            strcat(buff_temp,res_port[0]);
+//            strcat(buff_temp,"}]}");
+//            char* ip_add="127.0.0.1";
+//            int port_add=8000;
+//            
+//            clock_synchronized(fd);
+//            
+//            data_socket(ip_add, port_add, buff_temp);
+//        }
         strcpy(buff,"{\"Mac_addr\":\"");
         strcat(buff, mac_address[mac_num_recent]);
         strcat(buff, "\",\"Res_port\":");
