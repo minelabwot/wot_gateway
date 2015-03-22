@@ -241,11 +241,26 @@ int socket_server(int fd)
 			memset(mac_address,0,sizeof(mac_address));
 			//读取file_map文件
 			fp=fopen("file_map","r");
+//			int number=0;
+//			while(!feof(fp))
+//			{
 			fscanf(fp,"%s",mac_address[0]);
+//				number++;
+//			}
 			fclose(fp);
 
 			memset(buff,0,sizeof(buff));
+			//判断是那个mac地址
+//			int i=0;
+//			for(i=0;i<number;i++)
+//			{
+//				if(strcmp(mac_address[i],"camera"))
+//				{
 			strcpy(buff,mac_address[0]);
+//					buff[10]='\0';
+//					break;
+//				}
+//			}
 			strcat(buff,",");
 			//strcpy(buff,"+ZBD=1983,");
 			strcat(buff,buff_temp);
