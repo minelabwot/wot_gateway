@@ -14,9 +14,12 @@ int temperature_port=1;
 
 void login()
 {
+  String temperature_type="temperature_zigbee";
   myStringSerial = "c:";
   myStringSerial += res_num;
-  myStringSerial += ",f:0,p:";
+  myStringSerial += ",f:0,t:";
+  myStringSerial += temperature_type;
+  myStringSerial += ",p:";
   myStringSerial += temperature_port;
   myStringSerial +=",s:r";
   myStringSerial += ":stt";
@@ -32,6 +35,7 @@ void setup (void)
   //初始化I2C
   Wire.begin();
   
+  delay(3000);
   //节点注册
   login();
 }
@@ -43,7 +47,7 @@ void loop()
 
 void send_message()
 {
-  int delay_time=1000*20;
+  int delay_time=1000*4.7;
   delay(delay_time);
   temperature();
 //  delay(5000);
