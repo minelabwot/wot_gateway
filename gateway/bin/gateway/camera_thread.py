@@ -33,4 +33,4 @@ class CameraThread(threading.Thread):
 					print 'client may be disconnected'
 					break
 				print 'picdata length:',len(data)
-				gateway.WrtGateway.upload_image(6,urllib.urlencode(data))
+				#gateway.WrtGateway.upload_image(6,urllib.urlencode(data))
