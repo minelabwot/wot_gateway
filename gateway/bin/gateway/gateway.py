@@ -154,9 +154,16 @@ class WrtGateway:
 			print 'delete devid:' + devid + ' ok'
 		
 	@staticmethod	
-	def add_res(devid):
+	def add_res(devid,res_type):
+		'''
 		body = common.rd_prop('cfg/res_property.xml')
 		header = {'Content-type':'text/xml'}
+		'''
+		body_init = common.rd_prop('cfg/res_property.xml')
+		strinfo=re.compile('type')
+		body=strinfo.sub(res_type,body_init)
+		header = {'Content-type':'text/xml'}
+
 		print '\nadd resource...'	
 		ret = restful.method_post(init.url_addRes + '/' + WrtGateway.s_mwid + '?devid=' + devid,body,header)
 		newresid = ret.split('>')[2].split('<')[0]
@@ -197,8 +204,8 @@ class WrtGateway:
 	@staticmethod
 	def upload_image(resid,data):
 		header = {'Content-type':'image/jpeg'}
-		ret = restful.method_post(init.url_camera + '/' + WrtGateway.s_mwid + '?ResID' + str(resid),
-			data,header)
+		ret = restful.post_image('http://1.lixiaopengtest.sinaapp.com/uploadImage.php?' + 
+			WrtGateway.s_mwid + '?RESID' + str(resid),data)
 		print ret
 
 
