@@ -24,13 +24,18 @@ class CameraThread(threading.Thread):
 			while True:
 				try:
 					data = c.recv(614400)
+					data2 = c.recv(64)
 				except:
-					print 'recv exception occur'
+					print '[CameraThread] recv exception occur'
 					c.close()
 					break
 				if not data:
 					# if client disconnects suddenly, data is ''
-					print 'client may be disconnected'
+					print '[CameraThread] client may be disconnected'
 					break
+				print 'data:',data
 				print 'picdata length:',len(data)
+
+				if not data2:
+					print 'data2:',data2
 				#gateway.WrtGateway.upload_image(6,urllib.urlencode(data))

@@ -33,7 +33,7 @@ class HBThread(threading.Thread):
 					print 'command ret:',ret2.split('Content>')[1].split('<')[0]
 
 				except:
-					#print 'heartbeat exception'
+					print '[HBThread] heartbeat exception'
 					pass			
 
 			# heartbeat interval

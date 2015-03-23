@@ -36,12 +36,12 @@ class ResDataThread(threading.Thread):
 				try:
 					data = c.recv(64)
 				except:
-					print 'recv exception occur'
+					print '[ResDataThread] recv exception occur'
 					c.close()
 					break
 				if not data:
 					# if client disconnects suddenly, data is ''
-					print 'client may be disconnected'
+					print '[ResDataThread] client may be disconnected'
 					break
 
 				if len(Register_Del.mac_resID_resPlat_map) != 0:

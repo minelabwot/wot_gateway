@@ -2,6 +2,7 @@
 import random
 import time
 import sys
+import re
 
 import restful
 import init
@@ -155,13 +156,12 @@ class WrtGateway:
 		
 	@staticmethod	
 	def add_res(devid,res_type):
-		'''
-		body = common.rd_prop('cfg/res_property.xml')
-		header = {'Content-type':'text/xml'}
-		'''
 		body_init = common.rd_prop('cfg/res_property.xml')
 		strinfo=re.compile('type')
 		body=strinfo.sub(res_type,body_init)
+
+		print 'add_res body:\n',body
+		
 		header = {'Content-type':'text/xml'}
 
 		print '\nadd resource...'	
@@ -204,8 +204,8 @@ class WrtGateway:
 	@staticmethod
 	def upload_image(resid,data):
 		header = {'Content-type':'image/jpeg'}
-		ret = restful.post_image('http://1.lixiaopengtest.sinaapp.com/uploadImage.php?' + 
-			WrtGateway.s_mwid + '?RESID' + str(resid),data)
+		ret = restful.post_image('http://1.lixiaopengtest.sinaapp.com/uploadImage.php?MWID=' + 
+			WrtGateway.s_mwid + '&RESID' + str(resid),data)
 		print ret
 
 
