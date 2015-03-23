@@ -32,9 +32,9 @@ void loop() // run over and over
 
 void heart_check()
 {
-  for(int i=0;i<mac_size;i++)
+  for(int i=mac_address_num;i>=0;i--)
   {
-    if(mac_address[i]!="" && (millis()-start[i])>11000)
+    if(mac_address[i]!="" && (millis()-start[i])>11000 && mac_message[i]!="")
     {
 //      Serial.println(mac_address[i]);
 //      Serial.println(i);
@@ -44,6 +44,13 @@ void heart_check()
       mac_message[i]="";
       start[i]=0;
       mac_address[i]="";
+//      Serial.println("显示当前数据信息：");
+//      for(int k=0;k<mac_address_num;k++)
+//      {
+//        Serial.println(start[k]);
+//        Serial.println(mac_address[k]);
+//        Serial.println(mac_message[k]);
+//      }
       myStringSerial="stt:,m:";
     }
   }
@@ -70,19 +77,32 @@ void package_serial()
       mac_message[mac_address_num]=myStringSerial1;
       mac_address[mac_address_num]=mac_address_receive;
       start[mac_address_num]=millis();
-      Serial.println(mac_message[mac_address_num]);
-      Serial.println(mac_address[mac_address_num]);
-      Serial.println(start[mac_address_num]);
+//      Serial.print("mac_address_receive:");
+//      Serial.println(mac_address_receive);
+//      Serial.println(mac_message[mac_address_num]);
+//      Serial.println(mac_address[mac_address_num]);
+//      Serial.println(start[mac_address_num]);
       mac_address_num++;
     }
     else
     {
       for(int i=0;i<mac_address_num;i++)
       {
+//        Serial.print("loops=");
+//        Serial.println(i);
         if(mac_address[i]==mac_address_receive)
         {
           start[i]=millis();
-          Serial.println(start[i]);
+//          Serial.println("显示当前数据信息：");
+//          for(int k=0;k<mac_address_num;k++)
+//          {
+//            Serial.print("k=");
+//            Serial.println(k);
+//            Serial.println(start[k]);
+//            Serial.println(mac_address[k]);
+//            Serial.println(mac_message[k]);
+//          }
+//          Serial.println(start[i]);
 //          Serial.println(i);
           break;
         }
