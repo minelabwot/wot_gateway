@@ -2,6 +2,10 @@ import socket
 import threading
 import gateway
 import urllib
+import re
+import json
+import gateway
+from register import Register_Del
 
 class CameraThread(threading.Thread):
 	def __init__(self):
@@ -19,12 +23,11 @@ class CameraThread(threading.Thread):
 	def run(self):
 		while True:
 			print '[CameraThread] waiting client connection...'
-			c,addr = self.s.accept()
+			c,addr = self.s.accept()		
 			print '[CameraThread] Got conn from:',addr
 			while True:
 				try:
 					data = c.recv(614400)
-					data2 = c.recv(64)
 				except:
 					print '[CameraThread] recv exception occur'
 					c.close()
@@ -33,9 +36,34 @@ class CameraThread(threading.Thread):
 					# if client disconnects suddenly, data is ''
 					print '[CameraThread] client may be disconnected'
 					break
-				print 'data:',data
+
 				print 'picdata length:',len(data)
 
-				if not data2:
-					print 'data2:',data2
-				#gateway.WrtGateway.upload_image(6,urllib.urlencode(data))
+				image_header = re.findall(r'{".+}',data)[0]
+				image_data = re.sub(image_header,'',data)
+			
+				print 'image_data len:',len(image_data)
+
+				# must be open with 'wb' not 'w'
+				#fw = open('tmp.jpg','wb')
+				#fw.write(image_data)
+				#fw.close()
+
+				print '[CameraThread]mac_resID_resPlat_map',Register_Del.mac_resID_resPlat_map
+				print 'len:',len(Register_Del.mac_resID_resPlat_map)
+
+				if len(Register_Del.mac_resID_resPlat_map) != 0:
+
+					print 'image_header:',image_header
+					try:		
+						jsondata = json.loads(str(image_header))
+
+						print '[CameraThread2]mac_resID_resPlat_map',Register_Del.mac_resID_resPlat_map
+
+						if jsondata['Mac_addr'] in Register_Del.mac_resID_resPlat_map:
+							if str(jsondata['Res_port']) in Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']]:
+								gateway.WrtGateway.upload_image(Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']][str(jsondata['Res_port'])],image_data)
+					except:
+						pass
+
+				print 'debug2'

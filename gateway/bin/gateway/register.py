@@ -130,7 +130,7 @@ class Register_Del(threading.Thread):
 					else:
 						buf = s.recv(1024)
 						if buf:
-							#print 'buf:',buf
+							print 'buf:',buf
 							result=json.loads(buf)
 							if result['flags']==0:	
 								if result['Mac_address'] not in Register_Del.mac_dev_map:
@@ -175,6 +175,7 @@ class Register_Del(threading.Thread):
 								del Register_Del.mac_resID_resPlat_map[result["Mac_address"]]
 															
 							print '[RegisterThread] Res map:',Register_Del.mac_resID_resPlat_map
+							print '[RegisterThread] mac_dev_map:',Register_Del.mac_dev_map
 						else:
 							inputs.remove(s)
 							s.close()
