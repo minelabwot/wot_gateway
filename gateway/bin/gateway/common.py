@@ -70,8 +70,10 @@ def rd_prop(filename):
 	
 
 def clear_file(filename):
-	pass
-	#f = open(filename,)
+	f = open(filename,'w')
+	f.write('')
+
+	
 '''		
 
 def writeIdToFile(hwid,mwid):

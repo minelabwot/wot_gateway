@@ -86,6 +86,8 @@ class WrtGateway:
 		if ret.split('>')[2].split('<')[0] == 'true':
 			print 'update gateway property ok'
 			common.wr_settings('1','',2)
+			common.clear_file('cfg/mac_dev_map.cfg')
+			common.clear_file('cfg/mac_resID_resPlat_map.cfg')
 
 			if force_update == True:
 				sys.exit(0)
