@@ -69,6 +69,9 @@ def rd_prop(filename):
 	return f.read()
 	
 
+def clear_file(filename):
+	pass
+	#f = open(filename,)
 '''		
 
 def writeIdToFile(hwid,mwid):

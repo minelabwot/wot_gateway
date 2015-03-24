@@ -39,7 +39,7 @@ class CameraThread(threading.Thread):
 
 				print 'picdata length:',len(data)
 
-				image_header = re.findall(r'{".+}',data)[0]
+				image_header = re.findall(r'{"Mac_addr.+}',data)[0]
 				image_data = re.sub(image_header,'',data)
 			
 				print 'image_data len:',len(image_data)
