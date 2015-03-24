@@ -1,1 +1,3 @@
-Execute init.sh first before you are ready to do anything
+注意事项
+
+1、执行前，先保证cfg/下的*map.cfg文件都为空

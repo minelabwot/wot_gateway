@@ -76,6 +76,7 @@ if __name__ == '__main__':
 	gw.update_mw(F_UPT_MW)
 
 	#modify gateway alias if you like
+	
 	gw.update_id_info(alias)
 
 	th_reg=Register_Del(1,hostip,dev_port)

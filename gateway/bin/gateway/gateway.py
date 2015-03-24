@@ -207,13 +207,9 @@ class WrtGateway:
 	def upload_image(resid,data):
 		header = {'Content-type':'image/jpeg'}
 		ret = restful.post_image('http://1.lixiaopengtest.sinaapp.com/uploadImage.php?MWID=' + 
-			'000100006d735650' + '&RESID=' + str(resid),data)
+			WrtGateway.s_mwid + '&RESID=' + str(resid),data)
 		print 'uploading image...'
 
 
 	def get_sensordata(self,resid):
 		ret = method_get(url_sensorData + '/' + self.mwid + '?ResourceID=' + str(resid))
-
-	def test(self):
-		ret = restful.method_get(init.hostandport + '/WIFPa/extension/command?hwid=804384')
-		print 'ret',ret

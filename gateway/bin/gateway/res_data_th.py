@@ -16,7 +16,9 @@ class ResDataThread(threading.Thread):
 		#host = socket.gethostname()
 		# print 'hostname:',host
 		self.s.bind((hostip,port))
-		self.s.listen(1)
+
+		# when there're multiple clients sending messages, listening queue can't be 1 !!!
+		self.s.listen(5)
 		print 'listening res_data socket on %s:%d' %(hostip,port)
 
 	def resid_in_map(self,macaddr,__resid):

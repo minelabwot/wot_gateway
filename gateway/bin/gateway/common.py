@@ -72,22 +72,3 @@ def rd_prop(filename):
 def clear_file(filename):
 	f = open(filename,'w')
 	f.write('')
-
-	
-'''		
-
-def writeIdToFile(hwid,mwid):
-	fr = open('id.cfg','r')
-	fw = open('id.cfg','a')
-	if mwid == '':
-		fw.write(hwid + '\t' + '')
-	else:
-		while True:
-			strlist = fr.readline().strip('\n').split('\t')
-			#print strlist
-			if strlist[0] == hwid:
-				fw.write(mwid + '\n')
-				break
-	fr.close()
-	fw.close()
-'''
