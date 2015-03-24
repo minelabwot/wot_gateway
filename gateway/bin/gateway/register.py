@@ -130,52 +130,54 @@ class Register_Del(threading.Thread):
 					else:
 						buf = s.recv(1024)
 						if buf:
-							print 'buf:',buf
-							result=json.loads(buf)
-							if result['flags']==0:	
-								if result['Mac_address'] not in Register_Del.mac_dev_map:
-									dev_id=WrtGateway.add_dev()
-									Register_Del.mac_resID_resPlat_map[result["Mac_address"]]={}
-									Register_Del.mac_dev_map[result['Mac_address']]=dev_id
-									dev_write_to_cfg(result['Mac_address'],dev_id)
-									res_num=result['Res_num']
-
-									for i in range(res_num):
-										# if add device, then res must be added !!!
-										#if result['Res'][i]['Res_port'] not in Register_Del.resLocal_resPlat_map:
-										#res_id=WrtGateway.add_res(dev_id)
-										res_type=result['Res'][i]['Res_type']
-										res_id=WrtGateway.add_res(dev_id,res_type)
-
-										Register_Del.mac_resID_resPlat_map[result["Mac_address"]][str(result['Res'][i]['Res_port'])]=res_id
-										mac_resID_resPlat_write_to_cfg(result["Mac_address"],result['Res'][i]['Res_port'],res_id)
-
-										
-								else:									
-									res_num=result['Res_num']
-									dev_id=Register_Del.mac_dev_map[result['Mac_address']]
-									for i in range(res_num):
-										if str(result['Res'][i]['Res_port']) not in Register_Del.mac_resID_resPlat_map[result["Mac_address"]]:
-											#res_id=WrtGateway.add_res(dev_id)
-											
+							try:
+								json_buf=json.dumps(eval(buf))
+								result=json.loads(json_buf)
+								print 'analyis is succeed'
+								if result['flags']==0:
+									if result['Mac_address'] not in Register_Del.mac_dev_map:
+										dev_id=WrtGateway.add_dev()
+										Register_Del.mac_resID_resPlat_map[result["Mac_address"]]={}
+										Register_Del.mac_dev_map[result['Mac_address']]=dev_id
+										dev_write_to_cfg(result['Mac_address'],dev_id)
+										res_num=result['Res_num']
+										for i in range(res_num):
+											# if add device, then res must be added !!!
+												#if result['Res'][i]['Res_port'] not in Register_Del.resLocal_resPlat_map:
+												#res_id=WrtGateway.add_res(dev_id)
 											res_type=result['Res'][i]['Res_type']
 											res_id=WrtGateway.add_res(dev_id,res_type)
 
 											Register_Del.mac_resID_resPlat_map[result["Mac_address"]][str(result['Res'][i]['Res_port'])]=res_id
 											mac_resID_resPlat_write_to_cfg(result["Mac_address"],result['Res'][i]['Res_port'],res_id)
 
-										else:
-											pass
-							else:
-								dev_id=Register_Del.mac_dev_map[result['Mac_address']]
-								print 'device ' + dev_id + ' exited'
-								WrtGateway.del_dev(dev_id)
-								dev_del(result["Mac_address"])
-								del Register_Del.mac_dev_map[result["Mac_address"]]
-								del Register_Del.mac_resID_resPlat_map[result["Mac_address"]]
-															
-							print '[RegisterThread] Res map:',Register_Del.mac_resID_resPlat_map
-							print '[RegisterThread] mac_dev_map:',Register_Del.mac_dev_map
+												
+									else:									
+										res_num=result['Res_num']
+										dev_id=Register_Del.mac_dev_map[result['Mac_address']]
+										for i in range(res_num):
+											if str(result['Res'][i]['Res_port']) not in Register_Del.mac_resID_resPlat_map[result["Mac_address"]]:
+													#res_id=WrtGateway.add_res(dev_id)
+												
+												res_type=result['Res'][i]['Res_type']
+												res_id=WrtGateway.add_res(dev_id,res_type)
+
+												Register_Del.mac_resID_resPlat_map[result["Mac_address"]][str(result['Res'][i]['Res_port'])]=res_id
+												mac_resID_resPlat_write_to_cfg(result["Mac_address"],result['Res'][i]['Res_port'],res_id)
+
+											else:
+												pass
+								else:
+									dev_id=Register_Del.mac_dev_map[result['Mac_address']]
+									print 'device ' + dev_id + ' exited'
+									WrtGateway.del_dev(dev_id)
+									dev_del(result["Mac_address"])
+									del Register_Del.mac_dev_map[result["Mac_address"]]
+									del Register_Del.mac_resID_resPlat_map[result["Mac_address"]]
+																		
+								print '[RegisterThread] Res map:',Register_Del.mac_resID_resPlat_map
+							except:
+								print 'json analysis error,the buf is ',buf
 						else:
 							inputs.remove(s)
 							s.close()
