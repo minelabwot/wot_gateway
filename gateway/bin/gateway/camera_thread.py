@@ -25,40 +25,35 @@ class CameraThread(threading.Thread):
 			print '[CameraThread] waiting client connection...'
 			c,addr = self.s.accept()		
 			print '[CameraThread] Got conn from:',addr
+			image_data=""
+			image_header=""
 			while True:
-				try:
-					data = c.recv(700*1024)
-				except:
-					print '[CameraThread] recv exception occur'
-					c.close()
-					break
-				if not data:
+
+				data = c.recv(1024)
+			#	print 'data length is ',len(data)
+				if (len(data)<1024) or (not data):
 					# if client disconnects suddenly, data is ''
-					print '[CameraThread] client may be disconnected'
-					break
-
-				print 'total image length:',len(data)
-
-				image_header = re.findall(r'{"Mac_addr.+}',data)[0]
-				image_data = re.sub(image_header,'',data)
-
-				print 'image_header len:',len(image_header)
-				print 'image_data len:',len(image_data)
-
-				# must be open with 'wb' not 'w'
-				#fw = open('tmp.jpg','wb')
-				#fw.write(image_data)
-				#fw.close()
-
-				if len(Register_Del.mac_resID_resPlat_map) != 0:
+					#print '[CameraThread] client may be disconnected'
 					
-					try:		
-						jsondata = json.loads(str(image_header))
+					header_test = re.findall(r'{"Mac_addr":.+}',data)[0]
+					#print "header_test is ",header_test
+					image_header=header_test
+					print "not data"
+					
+					if len(Register_Del.mac_resID_resPlat_map) != 0:
+						print "image data len is ",len(image_data)
+						try:		
+							jsondata = json.loads(str(image_header))
 
 						#print '[CameraThread2]mac_resID_resPlat_map',Register_Del.mac_resID_resPlat_map
 
-						if jsondata['Mac_addr'] in Register_Del.mac_resID_resPlat_map:
-							if str(jsondata['Res_port']) in Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']]:
-								gateway.WrtGateway.upload_image(Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']][str(jsondata['Res_port'])],image_data)
-					except:
-						pass
+							if jsondata['Mac_addr'] in Register_Del.mac_resID_resPlat_map:
+								if str(jsondata['Res_port']) in Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']]:
+									gateway.WrtGateway.upload_image(Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']][str(jsondata['Res_port'])],image_data)
+									image_data=""
+									image_header=""
+						except:
+							pass
+				else:
+					image_data=image_data+data
+
