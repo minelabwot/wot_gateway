@@ -30,7 +30,7 @@ class CameraThread(threading.Thread):
 			while True:
 
 				data = c.recv(1024)
-			#	print 'data length is ',len(data)
+				#print 'data length is ',len(data)
 				if (len(data)<1024) or (not data):
 					# if client disconnects suddenly, data is ''
 					#print '[CameraThread] client may be disconnected'
@@ -38,14 +38,13 @@ class CameraThread(threading.Thread):
 					header_test = re.findall(r'{"Mac_addr":.+}',data)[0]
 					#print "header_test is ",header_test
 					image_header=header_test
-					print "not data"
 					
 					if len(Register_Del.mac_resID_resPlat_map) != 0:
 						print "image data len is ",len(image_data)
 						try:		
 							jsondata = json.loads(str(image_header))
 
-						#print '[CameraThread2]mac_resID_resPlat_map',Register_Del.mac_resID_resPlat_map
+							#print '[CameraThread2]mac_resID_resPlat_map',Register_Del.mac_resID_resPlat_map
 
 							if jsondata['Mac_addr'] in Register_Del.mac_resID_resPlat_map:
 								if str(jsondata['Res_port']) in Register_Del.mac_resID_resPlat_map[jsondata['Mac_addr']]:

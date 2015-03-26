@@ -23,45 +23,35 @@ class HBThread(threading.Thread):
 			print '[HBThread] uploading heartbeat'
 			ret1 = restful.method_get(init.url_hb + '/' + WrtGateway.s_hwid)
 			content = ret1.split('Content>')[1].split('<')[0]
-			#print '[HBThread] content:',content
 
-			if content == 'camera#on':
-				print '[HBThread] camera ON command coming. sending command ...'
-				self.hbsock.sendto(content,('',self.port))
+			if content == '0#1':
+				# some command coming
 
 				ret2 = restful.method_get(init.url_control + '=' + WrtGateway.s_hwid)
-				print 'command ret:',ret2.split('Content>')[1].split('<')[0]
-				
-			elif content == 'tv#up':
-				print '[HBThread] tv UP command comming. sending command...'
-				self.hbsock.sendto(content,('',self.port))
+				command = ret2.split('Content>')[1].split('<')[0]
 
-				ret2 = restful.method_get(init.url_control + '=' + WrtGateway.s_hwid)
-				print 'command ret:',ret2.split('Content>')[1].split('<')[0]
+				if command == 'camera#on':
+					print '[HBThread] camera ON command coming. sending command ...'
+					self.hbsock.sendto(command,('',self.port))
+			
+				elif command == 'tv#up':
+					print '[HBThread] tv UP command comming. sending command...'
+					self.hbsock.sendto(command,('',self.port))
 
-			elif content == 'tv#down':
-				print '[HBThread] tv DOWN command coming. sending command...'
-				self.hbsock.sendto(content,('',self.port))
+				elif command == 'tv#down':
+					print '[HBThread] tv DOWN command coming. sending command...'
+					self.hbsock.sendto(command,('',self.port))
 
-				ret2 = restful.method_get(init.url_control + '=' + WrtGateway.s_hwid)
-				print 'command ret:',ret2.split('Content>')[1].split('<')[0]
+				elif command == 'tv#left':
+					print '[HBThread] tv LEFT command coming. sending command...'
+					self.hbsock.sendto(command,('',self.port))
 
-			elif content == 'tv#left':
-				print '[HBThread] tv LEFT command coming. sending command...'
-				self.hbsock.sendto(content,('',self.port))
+				elif command == 'tv#right':
+					print '[HBThread] tv RIGHT command coming. sending command...'
+					self.hbsock.sendto(command,('',self.port))
 
-				ret2 = restful.method_get(init.url_control + '=' + WrtGateway.s_hwid)
-				print 'command ret:',ret2.split('Content>')[1].split('<')[0]
-
-			elif content == 'tv#right':
-				print '[HBThread] tv RIGHT command coming. sending command...'
-				self.hbsock.sendto(content,('',self.port))
-
-				ret2 = restful.method_get(init.url_control + '=' + WrtGateway.s_hwid)
-				print 'command ret:',ret2.split('Content>')[1].split('<')[0]
-
-			else:
-				pass		
+				else:
+					pass		
 
 			# heartbeat interval
 			time.sleep(self.interval)
