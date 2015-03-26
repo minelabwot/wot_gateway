@@ -40,6 +40,13 @@ char res_unit[100][100];
 char res_port[100][100];
 char res_val[100];
 
+
+//定义红外数据存储
+char IR_address[100][100];
+int IR_address_num=0;
+
+
+
 //打开串口
 int open_port(void)
 {
@@ -465,6 +472,55 @@ void data_socket(const char* ip,int port,char sendline[])
     close(sockfd);
     //exit(0);
 }
+
+//红外数据存储
+void IR_data()
+{
+	//调整IR_address内的内容
+	if(package_flag==0 && strstr(res_flags,"0"))
+	{
+		if(strstr(res_type[0],"TV"))
+		{
+			strcpy(IR_address[IR_address_num],mac_address[mac_num_recent]);
+			strcat(IR_address[IR_address_num],",TV");
+			IR_address_num++;
+		}
+		else if(strstr(res_type[0],"camera"))
+		{
+			strcpy(IR_address[IR_address_num],mac_address[mac_num_recent]);
+			strcat(IR_address[IR_address_num],",camera");
+			IR_address_num++;
+		}
+	}
+	else if(package_flag==0 && strstr(res_flags,"1"))
+	{
+		int i=0;
+		for(;i<IR_address_num;i++)
+		{
+			if(strstr(IR_address[i],res_type[0]))
+			{
+				memset(IR_address[i],0,sizeof(IR_address[i]));
+				break;
+			}
+		}
+	}
+	//如果是注册或删除信息，就重新生成file_map文件
+	if(package_flag==0 && (strstr(res_type[0],"TV") || strstr(res_type[0],"camera")))
+	{
+		fp=fopen("file_map","w");
+		int i=0;
+		for(;i<IR_address_num;i++)
+		{
+			if(IR_address[i][0]!='\0')
+			{
+				fprintf(fp,"%d",IR_address[i]);
+			}
+		}
+		fclose(fp);
+	}
+}
+
+
 
 //数据封装
 void data_packaging(int fd,char buff[])

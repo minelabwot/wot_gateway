@@ -24,7 +24,8 @@
 
 //读取file_map，获取mac信息
 FILE *fp;
-char mac_address[100][100];
+char IR_address[100];
+int IR_flag=0;//判断是哪个设备
 
 char buff[512] = "";//定义数据字符串
 char readbuff[100] = "";//串口读取
@@ -237,35 +238,53 @@ int socket_server(int fd)
 			buff_temp[buff_temp_size+1]='\n';
 			buff_temp[buff_temp_size+2]='\0';
 			
-			//清空mac_address数组，方便接收mac信息
-			memset(mac_address,0,sizeof(mac_address));
+			//判断红外指令是哪个设备
+			if(strstr(buff_temp,"TV")) IR_flag=1;
+			else if(strstr(buff_temp,"cm")) IR_flag=2;
+			printf("IR_flag=%d\n",IR_flag);
+
+//			//清空mac_address数组，方便接收mac信息
+//			memset(IR_address,0,sizeof(IR_address));
 			//读取file_map文件
 			fp=fopen("file_map","r");
-//			int number=0;
-//			while(!feof(fp))
-//			{
-			fscanf(fp,"%s",mac_address[0]);
-//				number++;
-//			}
+			while(!feof(fp))
+			{
+				//清空mac_address数组，方便接收mac信息
+				memset(IR_address,0,sizeof(IR_address));
+				fscanf(fp,"%s",IR_address);
+//				printf("IR_address=%s\n",IR_address);
+				if(IR_flag==1 && strstr(IR_address,"TV")) break;
+				if(IR_flag==2 && strstr(IR_address,"camera")) break;
+			}
 			fclose(fp);
-
-			memset(buff,0,sizeof(buff));
+//			printf("IR_address=%s\n",IR_address);
+//			memset(buff,0,sizeof(buff));
 			//判断是那个mac地址
 //			int i=0;
 //			for(i=0;i<number;i++)
 //			{
 //				if(strcmp(mac_address[i],"camera"))
 //				{
-			strcpy(buff,mac_address[0]);
+
+			//清空与mac地址无关的信息
+//			int i=10;
+//			for(i=10;i<strlen(IR_address);i++) IR_address[i]='\0';
+			IR_address[10]='\0';
+			printf("IR_address=%s\n",IR_address);
+			//
+//			strcpy(buff,mac_address[0]);
 //					buff[10]='\0';
 //					break;
 //				}
 //			}
-			strcat(buff,",");
+//
+//			//准备发送内容
+			strcpy(buff,IR_address);
+			//strcat(buff,",");
 			//strcpy(buff,"+ZBD=1983,");
 			strcat(buff,buff_temp);
 			printf("%s\n",buff);
-			if(serial_write(fd,buff,15)<=0)
+			if(serial_write(fd,buff,20)<=0)
 				printf("serial_write is failed.");
 			data_delete();
 		}
