@@ -32,26 +32,29 @@ class HBThread(threading.Thread):
 
 				if command == 'camera#on':
 					print '[HBThread] camera ON command coming. sending command ...'
-					self.hbsock.sendto(command,('',self.port))
-			
+
+				elif command == 'tv#on':
+					print '[HBThread] tv ON command coming. sending command ...'
+
 				elif command == 'tv#up':
 					print '[HBThread] tv UP command comming. sending command...'
-					self.hbsock.sendto(command,('',self.port))
 
 				elif command == 'tv#down':
 					print '[HBThread] tv DOWN command coming. sending command...'
-					self.hbsock.sendto(command,('',self.port))
 
 				elif command == 'tv#left':
 					print '[HBThread] tv LEFT command coming. sending command...'
-					self.hbsock.sendto(command,('',self.port))
 
 				elif command == 'tv#right':
 					print '[HBThread] tv RIGHT command coming. sending command...'
-					self.hbsock.sendto(command,('',self.port))
-
+		
 				else:
-					pass		
+					pass
+
+				try:
+					self.hbsock.sendto(command,('',self.port))
+				except:
+					print 'command send failed'
 
 			# heartbeat interval
 			time.sleep(self.interval)
