@@ -344,13 +344,13 @@ void data_unpackaging(int fd, char buff[])
                         {
 							i = j + i + 2;
 							res_type[res_type_num][j] = '\0';
-                            if((strcmp(res_type[res_type_num],"TV")==0)||(strcmp(res_type[res_type_num],"camera")==0))
-							{
-								fp=fopen("file_map","w");
-								fprintf(fp,"%s\n",mac_address[mac_num_recent]);
-								fclose(fp);
-							}
-							res_type_num++;
+//                            if((strcmp(res_type[res_type_num],"TV")==0)||(strcmp(res_type[res_type_num],"camera")==0))
+//							{
+//								fp=fopen("file_map","w");
+//								fprintf(fp,"%s\n",mac_address[mac_num_recent]);
+//								fclose(fp);
+//							}
+//							res_type_num++;
                             break;
                         }
 						res_type[res_type_num][j] = buff[j + i + 3];
@@ -511,10 +511,7 @@ void IR_data()
 		int i=0;
 		for(;i<IR_address_num;i++)
 		{
-			if(IR_address[i][0]!='\0')
-			{
-				fprintf(fp,"%d",IR_address[i]);
-			}
+				fprintf(fp,"%s\n",IR_address[i]);
 		}
 		fclose(fp);
 	}
@@ -632,6 +629,7 @@ int main(void)
 			//data_analysis(fd, readbuff);
             data_unpackaging(fd, buff);
 			data_packaging(fd, buff);
+			IR_data();
 			if(package_flag==0)
 			{
 				port=8000;

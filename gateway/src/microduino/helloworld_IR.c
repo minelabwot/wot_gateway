@@ -239,8 +239,8 @@ int socket_server(int fd)
 			buff_temp[buff_temp_size+2]='\0';
 			
 			//判断红外指令是哪个设备
-			if(strstr(buff_temp,"TV")) IR_flag=1;
-			else if(strstr(buff_temp,"cm")) IR_flag=2;
+			if(strstr(buff_temp,"tv")) IR_flag=1;
+			else if(strstr(buff_temp,"camera")) IR_flag=2;
 			printf("IR_flag=%d\n",IR_flag);
 
 //			//清空mac_address数组，方便接收mac信息
