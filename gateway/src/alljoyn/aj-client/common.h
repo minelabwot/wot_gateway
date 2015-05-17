@@ -1,11 +1,18 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#define MAX_RES_NUM		8
-#define	CUR_RES_NUM		3
+extern void get_mac(char macstr[]);
+extern void print_client_help();
+extern double get_sensor_data();
 
-//为了简单起见，除去资源单位与资源类型域，因为网关收到了也没用，反而增加了解析数据结构的复杂性
+struct res
+{
+	int resnum;
+	char type[10];
+};	
 
+
+/*
 struct res_info {
 	// 发现个问题：若把unit写在最后面，客户端产生了异常，所以就改到了最前面
 	char* unit;			// 资源单位
@@ -25,7 +32,6 @@ struct data_info {
 	uint8_t __resid;
 	double val;
 };
-
-extern void get_mac(char macstr[]);
+*/
 
 #endif

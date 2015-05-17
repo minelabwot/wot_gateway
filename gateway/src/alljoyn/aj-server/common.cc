@@ -11,6 +11,7 @@
 #include <cstdio>
 #include "common.h"
 
+#ifdef _WIN32
 void init_winsock()
 {
 	int ret;
@@ -23,7 +24,7 @@ void init_winsock()
 	}
 }
 
-#ifdef _WIN32
+
 IN_ADDR get_addr_info(const char* hostname)
 {
 	int ret;
@@ -82,9 +83,51 @@ void create_client_sock(int* fd_cli,const char* hostip,int port)
 
 	ret = connect(*fd_cli, (struct sockaddr *)&cliaddr, sizeof(struct sockaddr));
 	if( ret == 0 ){
-		printf("connect ok\n");
+		switch (port)
+		{
+		case 8000:
+			printf("connect to Device Property server socket ok\n");
+			break;
+		case 8001:
+			printf("connect to Resource Data server socket ok\n");
+			break;
+		case 8002:
+			printf("connect to Image Data server socket ok\n");
+			break;
+		default:
+			printf("port number error\n");
+			break;
+		}
 	}
 	else {
-		printf("connect to python server socket failed\n");
+		switch (port)
+		{
+		case 8000:
+			printf("connect to Device Property server socket failed\n");
+			break;
+		case 8001:
+			printf("connect to Resource Data server socket failed\n");
+			break;
+		case 8002:
+			printf("connect to Image Data server socket failed\n");
+			break;
+		default:
+			printf("port number error\n");
+			break;
+		}
 	}
+}
+
+void print_server_help()
+{
+	printf("--------------------  The Program Flow   -------------------\n\n");
+	printf("\t1.Create a server BusAttachment instance\n");
+	printf("\t2.Create interfaces for the instance\n");
+	printf("\t3.Register BusListener for the instance\n");
+	printf("\t4.Start bus instance\n");
+	printf("\t5.Create BusObject instance\n");
+	printf("\t6.Register BusObject for the bus instance\n");
+	printf("\t7.Connect to router\n");
+	printf("\t8.Start to advertise service\n\n");
+	printf("--------------------   End               -------------------\n\n");
 }

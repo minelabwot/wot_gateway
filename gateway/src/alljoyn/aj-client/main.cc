@@ -8,23 +8,19 @@
 
 #include <cstdlib>
 #include <cstring>
-
 #include <iostream>
 #include <time.h>
 #include <signal.h>
+
 #include <qcc/Debug.h>
 #include <alljoyn/version.h>
 
 #include "clientbusattachment.h"
-
 #include "mybuslistener.h"
 #include "mybusobject.h"
 #include "common.h"
 
-using namespace std;
-
 ClientBusAttachment* clientbus = NULL;
-
 MyBusObject* obj = NULL;
 MyBusListener busListener;
 
@@ -39,76 +35,19 @@ volatile sig_atomic_t g_joinComplete = false;
 char macstr[13] = {'\0'};//mac地址
 
 char dev_prop[1024] = "{\"Mac_address\":\"";
-char** _resid;
 
-struct res
-{
-	int resnum;
-	int type;
-};	
-struct res *pRes,*root;
-
-void printHelp()
-{
-	printf("--------------------  The Program Flow   -------------------\n\n");
-	printf("\t1.Create a server BusAttachment object 'clientbus'\n");
-	printf("\t2.Create interfaces for 'clientbus'\n");
-	printf("\t3.Register BusListener for 'clientbus'\n");
-	printf("\t4.Start 'clientbus'\n");
-	printf("\t5.Create BusObject 'myobj'\n");
-	printf("\t6.Register 'myobj' for 'servicebus'\n");
-	printf("\t7.Connect to router\n");
-	printf("\t8.Start to find service and do work\n\n");
-	printf("--------------------   End               -------------------\n\n");
-}
+struct res *root;
 
 void handle_prompt(int argc,char** argv)
 {
-	char tmp[64] = "";
-	sprintf(tmp,"%d",argc-2);
-
-	if (argc < 3) {
-		printf("usage:ajtest_client [macaddr] [resnum] ...\n");
-		exit(0);
-	}
-
-	_resid = (char**)malloc(sizeof(char) * (argc-2));
-	strcpy(macstr,argv[1]);
-	strcat(dev_prop,macstr);
-	strcat(dev_prop,"\",\"Res_num\":");
-	strcat(dev_prop,tmp);
-	strcat(dev_prop,",\"flags\":0,\"Res\":[");
-	for (int i=2; i<argc; i++) {	
-		strcpy(tmp,"{\"Res_name\":\"\",\"Res_type\":\"\",\"Res_unit\":\"\",\"Res_port\":");
-		strcat(tmp,argv[i]);
-		strcat(tmp,"}");
-		if (i != argc-1) {
-			strcat(tmp,",");
-			strcat(dev_prop,tmp);	
-		}
-		else {
-			strcat(dev_prop,tmp);
-		}
-
-		*_resid = argv[i];
-		//printf("%s\n",*_resid);
-		_resid++;
-	}
-	strcat(dev_prop,"]}");
-	printf("dev_prop: %s\n",dev_prop);
-
-}
-
-void handlePrompt(int argc,char** argv)
-{
-	char tmp[64] = "";
+	char tmp[128] = "";
 	sprintf(tmp,"%d",argc-1);
 
 	if (argc < 2) {
 		printf("usage:ajtest_client {resnum:restype} ...\n");
 		exit(0);
 	}
-	pRes = (struct res *)malloc(sizeof(struct res) * (argc-1));
+	struct res *pRes = (struct res *)malloc(sizeof(struct res) * (argc-1));
 	root = pRes;
 
 	if (pRes == NULL) {
@@ -122,22 +61,22 @@ void handlePrompt(int argc,char** argv)
 	strcat(dev_prop,",\"flags\":0,\"Res\":[");
 
 	for (int i=1; i<argc; i++) {
-		char restmp[4];
+		char restmp[10];
 		
-		char *p1 = strchr(argv[i],':');
-		int len = p1-argv[i];
-		strncpy(restmp,argv[i],len);
-		restmp[len] = '\0';
+		std::string tmpstr(argv[i]);
+		int pos = tmpstr.find(':');
+		std::string type = tmpstr.substr(pos+1);
+		std::string id = tmpstr.substr(0,pos);
 
-		pRes->resnum = atoi(restmp);
+		pRes->resnum = atoi(id.c_str());
 		strcpy(tmp,"{\"Res_name\":\"\",\"Res_port\":");
-		strcat(tmp,restmp);
-		strcpy(restmp,p1+1);
-		pRes->type = atoi(restmp);
+		strcat(tmp,id.c_str());
+		strcpy(restmp,type.c_str());
+		strcpy(pRes->type,type.c_str());
 
-		strcat(tmp,",\"Res_unit\":\"\",\"Res_type\":");
+		strcat(tmp,",\"Res_unit\":\"\",\"Res_type\":\"");
 		strcat(tmp,restmp);
-		strcat(tmp,"}");
+		strcat(tmp,"\"}");
 
 		if (i != argc-1) {
 			strcat(tmp,",");
@@ -156,20 +95,19 @@ int main(int argc, char** argv)
 {
 	get_mac(macstr);
 
-	handlePrompt(argc,argv);
+	handle_prompt(argc,argv);
 
-	printHelp();
+	//print_client_help();
 
 	//printf("%s\n",ajn::GetBuildInfo());
 	QStatus status = ER_OK;
 
-	clientbus = new ClientBusAttachment("myapp",true);
+	clientbus = new ClientBusAttachment("aj_client",true);
 	clientbus->createInterface(INTERFACE_NAME);
 	clientbus->RegisterBusListener(busListener);
 	clientbus->startMessageBus();
 
-    MyBusObject c_obj(*clientbus, OBJ_PATH);
-	obj = &c_obj;
+	obj = new MyBusObject(*clientbus, OBJ_PATH);
 
 	clientbus->registerBusObject(*obj);
 
@@ -184,21 +122,50 @@ int main(int argc, char** argv)
 	double val;
 	while (ER_OK == status) {
 		for (int i=0; i<argc-1; i++) {
-			val = rand() % 100;
-			if (root[i].type == 0){
-				obj->sendResdataSignal(root[i].resnum,val);
+
+			if (strcmp(root[i].type,"temp") == 0 || strcmp(root[i].type,"light") == 0 ){
+#if _WIN32
+				//如果在WIN下，传感器用随机值
+				val = rand() % 100;
+#else
+				//这里会有阻塞
+				val = get_sensor_data();
+#endif
+				obj->sendResdataSignal(root[i].resnum,val);//发送传感器值
 			}
-			if (root[i].type == 1)
-				obj->sendPicSignal("camera.jpg");
+
+			//如果是摄像头或照相机
+			else if (strcmp(root[i].type,"monitor") == 0) {
+#ifdef _WIN32
+				std::string filename = "image\\";
+#else
+				std::string filename = "image/";
+#endif
+				//获取摄像头驱动产生的在image目录下的图片
+				char resid[3];
+				sprintf(resid,"%d",root[i].resnum);
+				filename.append(resid);
+				filename.append(".jpg");
+
+				//printf("debug filename:%s\n",filename.c_str());
+				obj->sendPicSignal(filename.c_str());
+
+			}
+			else {
+				//当传感器类型不匹配时，作测试用
+				printf("sensor type input error\n");
+				val = rand() % 100;
+				obj->sendResdataSignal(root[i].resnum,val);//发送传感器测试值
+			}
 		}
-		
+
 		printf("\n");
 		
 		//一个设备的所有资源数据发送一次后，定时一段时间再发送
 #ifdef _WIN32
 		Sleep(1000*30);
 #else
-		sleep(30);
+		sleep(10);
 #endif
 	}
     return 0;

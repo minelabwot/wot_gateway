@@ -18,8 +18,6 @@ public:
 	QStatus sendResdataSignal(uint8_t __resid,double val);
 	QStatus sendPicSignal(const char* msg);
 
-	//void testSigHandler(const InterfaceDescription::Member* member, const char* srcPath, Message& msg);
-
 private:
 	const InterfaceDescription::Member* testSigMember;
 	const InterfaceDescription::Member* resDataSigMember;

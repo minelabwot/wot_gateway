@@ -1,5 +1,7 @@
 #include "mybuslistener.h"
 #include "clientbusattachment.h"
+#include "mybusobject.h"
+
 #include <iostream>
 #include <signal.h>
 
@@ -17,7 +19,6 @@ extern volatile sig_atomic_t g_joinComplete;
 
 void MyBusListener::FoundAdvertisedName(const char* name, TransportMask transport, const char* namePrefix)
 {
-	/* Since we are in a callback we must enable concurrent callbacks before calling a synchronous method. */
 	clientbus->EnableConcurrentCallbacks();
 	SessionOpts opts(SessionOpts::TRAFFIC_MESSAGES, true, SessionOpts::PROXIMITY_ANY, TRANSPORT_ANY);
 
@@ -38,29 +39,25 @@ void MyBusListener::FoundAdvertisedName(const char* name, TransportMask transpor
 	obj->sendDevPropSignal(dev_prop);
 }
 
+
 void MyBusListener::LostAdvertisedName(const char* name, TransportMask transport, const char* namePrefix)
 {
 	//客户端调用
 	cout << "client is losing advertised name:" << name << endl;
 }
 
+
 void MyBusListener::SessionLost (SessionId sessionId)
 {
 	// 客户端调用，先调用了它，再调用LostAdvertisedName
 	cout << "\nsession " << sessionId << " lost\n";
+
+	//会话丢失后怎样停止发送信号，但仍可再次接收连接 ？？？
 }
+
 
 void MyBusListener::NameOwnerChanged(const char* busName, const char* previousOwner, const char* newOwner)
 {
-	// 总是被自动连接调用好几次，为什么 ？
-	printf("NameOwnerChanged: name=%s, oldOwner=%s, newOwner=%s\n", busName, previousOwner ? previousOwner : "<none>",
-		newOwner ? newOwner : "<none>");
-	if (newOwner == NULL) {
-		printf("joiner '%s' exited\n",previousOwner);
-	}
-}
-
-void MyBusListener::BusDisconnected()
-{
-
+	cout << "NameOwnerChanged: name=" << busName << ", oldOwner=" << (previousOwner ? previousOwner : "<none>") <<
+		", newOwner=" << (newOwner ? newOwner : "<none>") << endl;
 }

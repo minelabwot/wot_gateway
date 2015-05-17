@@ -2,7 +2,8 @@
 #define _CLIENTBUSATTACHMENT_H_
 
 #include <alljoyn/BusAttachment.h>
-#include "mybusobject.h"
+
+class MyBusObject;
 
 class ClientBusAttachment:public ajn::BusAttachment
 {

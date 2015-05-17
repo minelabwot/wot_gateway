@@ -67,16 +67,15 @@ void MyBusListener::SessionMemberRemoved(SessionId sessionId, const char* unique
 {
 	printf("[SessionMemberRemoved] %s left session %u\n",uniqueName,sessionId);
 	char dev_left_info[64] = "\0";
-	strncpy(dev_left_info,DevProp.c_str(),(DevProp.find('"',16)+1));//检测第4个"的位置
-	//printf("dev_left_info:%s\n",dev_left_info);
-	strcat(dev_left_info,",\"flags\":1}");
+	strncpy(dev_left_info,DevProp.c_str(),(DevProp.find('"',16)+1));//提取出Mac_address和它的值
+	strcat(dev_left_info,",\"flags\":1}");//flags=1表明要删除设备
 
 #ifdef _WIN32
 	int size = send(fd_dev_prop,dev_left_info,strlen(dev_left_info),0);
 #else
 	//if MSG_NOSIGNAL is not given on Linux,
 	//send call will throw a signal to OS and stop program
-	int size = send(fd_dev_prop,dev_prop,strlen(dev_prop),MSG_NOSIGNAL);
+	int size = send(fd_dev_prop,dev_left_info,strlen(dev_left_info),MSG_NOSIGNAL);
 #endif
 }
 

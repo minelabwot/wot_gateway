@@ -12,7 +12,7 @@ public:
 	virtual void FoundAdvertisedName(const char* name, TransportMask transport, const char* namePrefix);		
 	virtual void LostAdvertisedName(const char* name, TransportMask transport, const char* namePrefix);
 	virtual void NameOwnerChanged(const char* busName, const char* previousOwner, const char* newOwner);
-	virtual void BusDisconnected();
+	//virtual void BusDisconnected();
 
 	//¼Ì³Ð×ÔSessionListener
 	virtual void SessionLost (SessionId sessionId);

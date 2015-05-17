@@ -26,49 +26,40 @@ int fd_dev_prop;
 int fd_resdata;
 int fd_picdata;
 
-void printHelp()
-{
-	printf("--------------------  The Program Flow   -------------------\n\n");
-	printf("\t1.Create a server BusAttachment object 'servicebus'\n");
-	printf("\t2.Create interfaces for 'servicebus'\n");
-	printf("\t3.Register BusListener for 'servicebus'\n");
-	printf("\t4.Start 'servicebus'\n");
-	printf("\t5.Create BusObject 'myobj'\n");
-	printf("\t6.Register 'myobj' for 'servicebus'\n");
-	printf("\t7.Connect to router\n");
-	printf("\t8.Start to advertise service\n\n");
-	printf("--------------------   End               -------------------\n\n");
-}
-
 const char* host;
 int port;
 
-char *pData;
-
 int main(int argc, char** argv)
 {	
-	printHelp();
-	pData = (char*)malloc(600*1024);
-	if (pData == NULL) {
-		printf("malloc pData failed\n");
-	}
-	memset(pData,0,600*1024);
+	//print_server_help();
 
 #ifdef _WIN32
-	init_winsock();//必须初使化
+	init_winsock();//win下必须进行socket初使化
 #endif
 
-	//连接python服务端
-	create_client_sock(&fd_dev_prop,LOCALNAME,SOCKET_DEV_PROP_PORT);//设备属性端
-	create_client_sock(&fd_resdata,LOCALNAME,SOCKET_RES_DATA_PORT);//资源数据端
-	create_client_sock(&fd_picdata,LOCALNAME,SOCKET_PIC_DATA_PORT);//摄像头socket端
+	if (argc == 1) {
+		//连接python服务端
+		create_client_sock(&fd_dev_prop,LOCALNAME,SOCKET_DEV_PROP_PORT);//设备属性端
+		create_client_sock(&fd_resdata,LOCALNAME,SOCKET_RES_DATA_PORT);//资源数据端
+		create_client_sock(&fd_picdata,LOCALNAME,SOCKET_PIC_DATA_PORT);//摄像头socket端
+	}
+	else if (argc >= 3){
+		printf("parameter error\n");
+		return -1;
+	}
+	else {
+		if (strcmp(argv[1],"-nc") != 0) {
+			printf("parameter error\n");
+			return -1;
+		}
+	}
 	
     QStatus status = ER_OK;
 
-	servicebus = new ServiceBusAttachment("myapp",true);
+	servicebus = new ServiceBusAttachment("aj_server",true);
 	servicebus->createInterface(INTERFACE_NAME);
-
-   	//servicebus->RegisterBusListener(busListener);//加入SessionMemberRemoved之后就不能在这里注册监听了
+	//加入SessionMemberRemoved之后就不能在这里注册监听了
+   	//servicebus->RegisterBusListener(busListener);
 
     servicebus->Start();
 	

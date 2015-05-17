@@ -1,7 +1,8 @@
 #include "clientbusattachment.h"
+#include "mybusobject.h"
+
 #include <iostream>
 #include <signal.h>
-#include "mybusobject.h"
 
 using namespace std;
 
@@ -28,7 +29,8 @@ void ClientBusAttachment::createInterface(const char* intfName)
 
 		//intf->AddSignal("sig_resdata","a(sqd)","arg1",0);
 		intf->AddSignal("sig_resdata","s","arg1",0);
-		intf->AddSignal("sig_pic","say","name,data",0);//传图片信号
+		//intf->AddSignal("sig_pic","say","name,data",0);//传图片信号
+		intf->AddSignal("sig_pic","says","name,data,macstr",0);//传图片信号
 
         intf->Activate();
     } else {
@@ -63,11 +65,8 @@ void ClientBusAttachment::connectBusAttachment(void)
     }
 }
 
-/** Begin discovery on the well-known name of the service to be called, report the result to
-   stdout, and return the result status. */
 void ClientBusAttachment::findAdvertisedName(void)
 {
-    /* Begin discovery on the well-known name of the service to be called */
     QStatus status = FindAdvertisedName(SERVICE_NAME);
 
     if (status != ER_OK) {
@@ -75,7 +74,6 @@ void ClientBusAttachment::findAdvertisedName(void)
     } 
 }
 
-/** Wait for join session to complete, report the event to stdout, and return the result status. */
 QStatus ClientBusAttachment::waitForJoinSessionCompletion(void)
 {
     unsigned int count = 0;

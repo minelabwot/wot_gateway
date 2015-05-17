@@ -34,7 +34,7 @@ void ServiceBusAttachment::createInterface(const char* intfName)
 
 		//intf->AddSignal("sig_resdata","a(sqd)","arg1",0);
 		intf->AddSignal("sig_resdata","s","arg1",0);
-		intf->AddSignal("sig_pic","say","name,data",0);
+		intf->AddSignal("sig_pic","says","name,data,macstr",0);
 
 
 		intf->AddMethod("dev_prop","s",NULL,"inStr",0);//古宗海添加方法
@@ -51,7 +51,7 @@ QStatus ServiceBusAttachment::requestName(const char* serviceName,uint32_t flag)
 	QStatus status = servicebus->RequestName(serviceName, flag);
 
 	if (ER_OK == status) {
-		printf("\nservice '%s' request ok\n",serviceName);
+		//printf("\nservice '%s' request ok\n",serviceName);
 	}
 	else {
 		printf("RequestName('%s') failed (status=%s).\n",serviceName, QCC_StatusText(status));
@@ -66,7 +66,7 @@ QStatus ServiceBusAttachment::createSession(const TransportMask mask,MyBusListen
 	QStatus status = servicebus->BindSessionPort(sp, opts, busListener);
 
 	if (ER_OK == status) {
-		printf("bind session port %u ok\n",MyNameSpace::PORT);
+		//printf("bind session port %u ok\n",MyNameSpace::PORT);
 	}
 	else {
 		printf("BindSessionPort failed (%s).\n", QCC_StatusText(status));
@@ -80,7 +80,7 @@ QStatus ServiceBusAttachment::advertiseName(const char* serviceName,TransportMas
 	QStatus status = servicebus->AdvertiseName(serviceName, mask);
 
 	if (ER_OK == status) {
-		printf("advertise service '%s' ok\n",serviceName);
+		//printf("advertise service '%s' ok\n",serviceName);
 	}
 	else {
 		printf("Failed to advertise name '%s' (%s).\n",serviceName, QCC_StatusText(status));
