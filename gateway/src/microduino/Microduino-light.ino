@@ -29,9 +29,5 @@ void send_message()
 void photoresistance()
 {
   int myStringSerial=analogRead(A0);
-  if(myStringSerial!="")
-  {
-    Serial.println(myStringSerial); 
-  }
-  myStringSerial="";
+  Serial.println(myStringSerial); 
 }
