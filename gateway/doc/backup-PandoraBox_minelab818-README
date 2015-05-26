@@ -17,6 +17,7 @@
 3、配置完成。现在可以运行程序了：
 3.1、运行与平台通信的程序  python  /mnt/usb/wot_gateway/gatewpay/bin/gateway/main.py
 3.2、运行alljoyn后台   /mnt/usb/wot_gateway/gateway/bin/alljoyn/alljoyn-daemon &
-3.3、运行alljoyn 服务端   /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_server 127.0.0.1
-​3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld
+3.3、运行alljoyn 服务端   /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_server
+3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld
+3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld_IR
 
