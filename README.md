@@ -8,3 +8,6 @@ this is the code of minelab-wot
 2、能够实现节点资源的web化。可以将节点的资源内容全部转换成URL，只要调用URL，即可实现节点信息的查询和节点的控制。
 
 详细使用方法在“gateway/doc/”下，附带两个使用说明，一个是详细的配置过程，一个是傻瓜式的使用方法。可以随意使用。
+
+
+minelabmakes
