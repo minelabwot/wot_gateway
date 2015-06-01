@@ -21,3 +21,6 @@
 3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld
 3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld_IR
 
+4、删除节点和网关信息
+4.1、运行删除节点和网关信息的指令 sh /mnt/usb/wot_gateway/gatewpay/bin/gateway/delete_pram.sh
+
