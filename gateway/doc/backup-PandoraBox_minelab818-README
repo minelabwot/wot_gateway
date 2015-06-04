@@ -1,4 +1,7 @@
-#这是Microwrt上有关配置的备份，使用它还原WRT，可以不用再配置环境。不过这个备份只保存配置，不保存文件内容。这个主意。
+#这是Microwrt上有关配置的备份，使用它还原WRT，可以不用再配置环境。不过这个备份只保存配置，不保存文件内容。
+
+这是WRT网关的使用说明，WRT节点的请看其他说明文档。
+
 使用过程：
 1>下载本文件
 2>找到新的Microwrt，连接后打开浏览器，输入192.168.1.1，打开luci界面。
@@ -13,14 +16,23 @@
 2.2、格式化U盘 —> mkfs.ext4 /dev/sda1
 2.3、重启wrt —> reboot
 2.4、将程序拷贝到板子上 —> scp -r wot_gateway/ root@192.168.8.1:/mnt/usb/
+2.5、参考下面这个网址连接WiFi
+https://www.microduino.cc/wiki/index.php?title=%E7%AC%AC%E5%85%AD%E8%AF%BE--OpenWRT_%E5%BC%80%E6%9C%BA%E6%95%99%E7%A8%8B
+2.6、利用浏览器打开页面，找到“网络”中的“防火墙”，将所有的状态选择为“接受”
 
 3、配置完成。现在可以运行程序了：
 3.1、运行与平台通信的程序  python  /mnt/usb/wot_gateway/gatewpay/bin/gateway/main.py
+    （单独开个界面）
 3.2、运行alljoyn后台   /mnt/usb/wot_gateway/gateway/bin/alljoyn/alljoyn-daemon &
+    （单独开个界面）
 3.3、运行alljoyn 服务端   /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_server
 3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld
+    （单独开个界面）
 3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld_IR
+    （单独开个界面）
 
-4、删除节点和网关信息
-4.1、运行删除节点和网关信息的指令 sh /mnt/usb/wot_gateway/gatewpay/bin/gateway/delete_pram.sh
+4、删除节点和网关信息（如果需要的话）
+4.1、关闭所有进程：
+    对于./运行的程序，可以直接Ctrl+c进行关闭；但是对于pyton运行的程序，需要使用Ctrl+z，然而这只是关闭了前台，程序仍然在后台运行。此时需要使用kill -9 %1删除
+4.1、关闭所有进程，运行删除节点和网关信息的指令 sh /mnt/usb/wot_gateway/gatewpay/bin/gateway/delete_pram.sh
 
