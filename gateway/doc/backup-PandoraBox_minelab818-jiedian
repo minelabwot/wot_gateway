@@ -21,17 +21,19 @@ https://www.microduino.cc/wiki/index.php?title=%E7%AC%AC%E5%85%AD%E8%AF%BE--Open
 2.6、利用浏览器打开页面，找到“网络”中的“防火墙”，将所有的状态选择为“接受”
 
 3、配置完成。现在可以运行程序了：
-3.1目前alljoyn节点有温度和光照两种。
+3.1、目前alljoyn节点有温度和光照两种。
 3.2、运行alljoyn端温度节点
-        首先电脑连接温节点WiFi，打开终端输入命令：ssh root@192.168.8.1 ，进入了microwrt界面。
-        /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_client 5:temp
+     首先电脑连接温度节点WiFi，打开终端输入命令：ssh root@192.168.8.1 ，密码admin，进入了microwrt界面。
+     运行alljoyn后台   /mnt/usb/wot_gateway/gateway/bin/alljoyn/alljoyn-daemon &
+     运行alljoyn客户端 /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_client 5:temp
+     （运行窗口不要关闭）
+3.3、运行alljoyn端光照节点
+     首先电脑连接光照节点WiFi，打开终端输入命令：ssh root@192.168.8.1 ，密码admin，进入了microwrt界面。
+     运行alljoyn后台   /mnt/usb/wot_gateway/gateway/bin/alljoyn/alljoyn-daemon &
+     运行alljoyn客户端 /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_client 6:light
+     （运行窗口不要关闭）
+3.4、客户端运行方式为：aj_client port:type 。 温度和光照节点的port不能一样（5和6可变），type写运行的类型（温度（temp）或者光照（light），不能变）。
 
-3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld
-    （单独开个界面）
-3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld_IR
-    （单独开个界面）
-
-4、删除节点和网关信息（如果需要的话）
-4.1、关闭所有进程：
-    对于./运行的程序，可以直接Ctrl+c进行关闭；但是对于pyton运行的程序，需要使用Ctrl+z，然而这只是关闭了前台，程序仍然在后台运行。此时需要使用kill -9 %1删除
-4.1、关闭所有进程，运行删除节点和网关信息的指令 sh /mnt/usb/wot_gateway/gatewpay/bin/gateway/delete_pram.sh
+4、关闭节点（如果需要的话）
+4.1、关闭进程：
+    对于./运行的程序，可以直接Ctrl+c进行关闭；但是对于alljoyn后台的程序仍然在后台运行，此时需要使用kill -9 %1关闭。
