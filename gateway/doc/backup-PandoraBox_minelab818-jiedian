@@ -3,7 +3,7 @@
 这是WRT节点的使用说明。
 
 使用过程：
-1>下载本文件
+1>下载本文件：backup-PandoraBox_minelab818-2014-08-01.tar.gz。
 2>找到新的Microwrt，连接后打开浏览器，输入192.168.1.1，打开luci界面。
 3>点击管理，输入密码后，点击备份，第二个选项就是还原备份了。
 4>点击"打开文件"，把文件加入后点击备份。等备份重启完就可以了。
@@ -21,11 +21,11 @@ https://www.microduino.cc/wiki/index.php?title=%E7%AC%AC%E5%85%AD%E8%AF%BE--Open
 2.6、利用浏览器打开页面，找到“网络”中的“防火墙”，将所有的状态选择为“接受”
 
 3、配置完成。现在可以运行程序了：
-3.1、运行与平台通信的程序  python  /mnt/usb/wot_gateway/gatewpay/bin/gateway/main.py
-    （单独开个界面）
-3.2、运行alljoyn后台   /mnt/usb/wot_gateway/gateway/bin/alljoyn/alljoyn-daemon &
-    （单独开个界面）
-3.3、运行alljoyn 服务端   /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_server
+3.1目前alljoyn节点有温度和光照两种。
+3.2、运行alljoyn端温度节点
+        首先电脑连接温节点WiFi，打开终端输入命令：ssh root@192.168.8.1 ，进入了microwrt界面。
+        /mnt/usb/wot_gateway/gateway/bin/alljoyn/aj_client 5:temp
+
 3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld
     （单独开个界面）
 3.4、运行 microduino     /mnt/usb/wot_gateway/gateway/bin/microduino/helloworld_IR
