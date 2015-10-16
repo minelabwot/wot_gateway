@@ -32,47 +32,54 @@ class HBThread(threading.Thread):
 				except:
 					pass
 
-				if command == 'camera#on':
-					print '[HBThread] camera ON command coming. sending command ...'
-					try:
-						self.hbsock.sendto(command,('',self.port))
-					except:
-						print 'command send failed'
+				#pass command with none operation
+				print '[HBThread] ' + command + ' command coming. sending command ...'
+				try:
+					self.hbsock.sendto(command,('',self.port))
+				except:
+					print 'command send failed'
 
-				elif command == 'tv#on':
-					print '[HBThread] tv ON command coming. sending command ...'
-					try:
-						self.hbsock.sendto(command,('',self.port))
-					except:
-						print 'command send failed'
+				# if command == 'camera#on':
+				# 	print '[HBThread] camera ON command coming. sending command ...'
+				# 	try:
+				# 		self.hbsock.sendto(command,('',self.port))
+				# 	except:
+				# 		print 'command send failed'
 
-				elif command == 'tv#up':
-					print '[HBThread] tv UP command comming. sending command...'
-					try:
-						self.hbsock.sendto(command,('',self.port))
-					except:
-						print 'command send failed'
+				# elif command == 'tv#on':
+				# 	print '[HBThread] tv ON command coming. sending command ...'
+				# 	try:
+				# 		self.hbsock.sendto(command,('',self.port))
+				# 	except:
+				# 		print 'command send failed'
 
-				elif command == 'tv#down':
-					print '[HBThread] tv DOWN command coming. sending command...'
-					try:
-						self.hbsock.sendto(command,('',self.port))
-					except:
-						print 'command send failed'
+				# elif command == 'tv#up':
+				# 	print '[HBThread] tv UP command comming. sending command...'
+				# 	try:
+				# 		self.hbsock.sendto(command,('',self.port))
+				# 	except:
+				# 		print 'command send failed'
 
-				elif command == 'tv#left':
-					print '[HBThread] tv LEFT command coming. sending command...'
-					try:
-						self.hbsock.sendto(command,('',self.port))
-					except:
-						print 'command send failed'
+				# elif command == 'tv#down':
+				# 	print '[HBThread] tv DOWN command coming. sending command...'
+				# 	try:
+				# 		self.hbsock.sendto(command,('',self.port))
+				# 	except:
+				# 		print 'command send failed'
 
-				elif command == 'tv#right':
-					print '[HBThread] tv RIGHT command coming. sending command...'
-					try:
-						self.hbsock.sendto(command,('',self.port))
-					except:
-						print 'command send failed'
+				# elif command == 'tv#left':
+				# 	print '[HBThread] tv LEFT command coming. sending command...'
+				# 	try:
+				# 		self.hbsock.sendto(command,('',self.port))
+				# 	except:
+				# 		print 'command send failed'
+
+				# elif command == 'tv#right':
+				# 	print '[HBThread] tv RIGHT command coming. sending command...'
+				# 	try:
+				# 		self.hbsock.sendto(command,('',self.port))
+				# 	except:
+				# 		print 'command send failed'
 		
 				else:
 					pass
