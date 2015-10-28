@@ -109,24 +109,28 @@ void package_analysis()
         Serial.println("left");
         irsend.sendNEC(0xFD9867, 32);   
 //        irsend.sendNEC(0xFFFFFFFF, 64);   
+        break;
       }
       else if(myStringSerial_down[i]=='r' && myStringSerial_down[i+1]=='i')
       {
         Serial.println("right");
         irsend.sendNEC(0xFD18E7, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
       else if(myStringSerial_down[i]=='u' && myStringSerial_down[i+1]=='p' && myStringSerial_down[i-1]!='_')
       {        
         Serial.println("up");
         irsend.sendNEC(0xFD6897, 32);   
-//        irsend.sendNEC(0xFFFFFFFF, 64);   
+//        irsend.sendNEC(0xFFFFFFFF, 64); 
+        break;  
       }
       else if(myStringSerial_down[i]=='d' && myStringSerial_down[i+1]=='o' && myStringSerial_down[i-1]!='_')
       {
         Serial.println("down");
         irsend.sendNEC(0xFDE817, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
       else if(myStringSerial_down[i]=='v' && myStringSerial_down[i+2]=='u')
       {
@@ -136,6 +140,7 @@ void package_analysis()
         delay(20);// This need change voice twice to complite once
         irsend.sendNEC(0xFD22DD, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
       else if(myStringSerial_down[i]=='v' && myStringSerial_down[i+2]=='d')
       {
@@ -145,36 +150,42 @@ void package_analysis()
         delay(20);// This need change voice twice to complite once
         irsend.sendNEC(0xFDC23D, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
       else if(myStringSerial_down[i]=='c' && myStringSerial_down[i+2]=='u')
       {
         Serial.println("channel_up");
         irsend.sendNEC(0xFDE817, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
       else if(myStringSerial_down[i]=='c' && myStringSerial_down[i+2]=='d')
       {
         Serial.println("channel_down");
         irsend.sendNEC(0xFD6897, 32);
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
       else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+1]=='a')
       {
         Serial.println("main page");
         irsend.sendNEC(0xFD3AC5, 32);
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
       else if(myStringSerial_down[i]=='e' && myStringSerial_down[i+1]=='x')
       {
         Serial.println("exit");
         irsend.sendNEC(0xFD12ED, 32);
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
       else if(myStringSerial_down[i]=='s' && myStringSerial_down[i+1]=='e')
       {
         Serial.println("set");
         irsend.sendNEC(0xFDF00F, 32);
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
     }
 }
