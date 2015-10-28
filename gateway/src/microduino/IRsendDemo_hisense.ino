@@ -104,28 +104,28 @@ void package_analysis()
         irsend.sendNEC(0xFDA857, 32);   // kaiji
 //        irsend.sendNEC(0xFFFFFFFF, 64);   // kaiji
       }
-      else if(myStringSerial_down[i]=='l' && myStringSerial_down[i+1]=='e')
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+2]=='l')
       {
         Serial.println("left");
         irsend.sendNEC(0xFD9867, 32);   
 //        irsend.sendNEC(0xFFFFFFFF, 64);   
         break;
       }
-      else if(myStringSerial_down[i]=='r' && myStringSerial_down[i+1]=='i')
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+2]=='r')
       {
         Serial.println("right");
         irsend.sendNEC(0xFD18E7, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
         break;
       }
-      else if(myStringSerial_down[i]=='u' && myStringSerial_down[i+1]=='p' && myStringSerial_down[i-1]!='_')
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+2]=='u')
       {        
         Serial.println("up");
         irsend.sendNEC(0xFD6897, 32);   
 //        irsend.sendNEC(0xFFFFFFFF, 64); 
         break;  
       }
-      else if(myStringSerial_down[i]=='d' && myStringSerial_down[i+1]=='o' && myStringSerial_down[i-1]!='_')
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+2]=='d')
       {
         Serial.println("down");
         irsend.sendNEC(0xFDE817, 32);  
