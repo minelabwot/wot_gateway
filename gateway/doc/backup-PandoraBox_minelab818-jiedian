@@ -3,17 +3,22 @@
 这是WRT节点的使用说明。
 
 使用过程：
+0>U型向上，上侧为1010，下侧为0101（按钮扳上去为1）
 1>下载本文件：backup-PandoraBox_minelab818-2014-08-01.tar.gz。
 2>找到新的Microwrt，连接后打开浏览器，输入192.168.1.1，打开luci界面。
 3>点击管理，输入密码后，点击备份，第二个选项就是还原备份了。
 4>点击"打开文件"，把文件加入后点击备份。等备份重启完就可以了。
+5.配置后的节点网络名称是pandorabox_818（Wifi名称）,可以根据需要自定义名称，更改方法为ssh进入wrt的linux系统中（ssh root@192.168.8.1）密码admin
+6.修改/ect/config/wirless文件，找到其中有下面文字段：optional ssid "Pandorabox_minelab818"把引号中的内容修改为自己需要的名字
+7.进入/etc/init.d文件夹，输入./network restart
+8.在网络-无线处配置网管连接到外网
 
 注意：
 1、由于是统一设定，所以WiFi名称均为PandoraBox_minelab818，IP地址为192.168.8.1。所以想更改的可以通过修改/etc/config/wireless文件修改WiFi名称。
-
+   账号名root 密码 admin
 2、以上步骤仅更新了配置，没有更新文件。所以仍需要进行以下步骤：
 2.1、创建在/mnt目录下创建usb文件夹 —> mkdir /mnt/usb
-2.2、格式化U盘 —> mkfs.ext4 /dev/sda1
+2.2、格式化U盘 —> mkfs.ext4 /dev/sda1  并将u盘挂载在/mnt/usb下
 2.3、重启wrt —> reboot
 2.4、将程序拷贝到板子上 —> scp -r wot_gateway/ root@192.168.8.1:/mnt/usb/
 2.5、参考下面这个网址连接WiFi
