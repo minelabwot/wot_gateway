@@ -10,6 +10,8 @@ String myStringSerial="";
 int res_num=2;
 int temperature_port=1;
 int photoresistance_port=2;
+String temperature_type="temperature";
+String photoresistance_type="photoresistance";
 
 void login()
 {
@@ -17,8 +19,12 @@ void login()
   myStringSerial += res_num;
   myStringSerial += ",f:0,p:";
   myStringSerial += temperature_port;
+  myStringSerial += ",t:";
+  myStringSerial += temperature_type;
   myStringSerial += ",p:";
   myStringSerial += photoresistance_port;
+  myStringSerial += ",t:";
+  myStringSerial += photoresistance_type;
   myStringSerial +=",s:r";
   myStringSerial += ":stt";
   Serial.println(myStringSerial);
