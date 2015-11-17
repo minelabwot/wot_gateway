@@ -98,31 +98,41 @@ void package_analysis()
         irsend.sendNEC(0xFDB04F, 32);   // kaiji
 //        irsend.sendNEC(0xFFFFFFFF, 64);   // kaiji
       }
-      else if(myStringSerial_down[i]=='l'&&myStringSerial_down[i+1]=='e')
+      else if(myStringSerial_down[i]=='o'&&myStringSerial_down[i+1]=='k')
+      {
+        Serial.println("ok");
+        irsend.sendNEC(0xFDA857, 32);   // kaiji
+//        irsend.sendNEC(0xFFFFFFFF, 64);   // kaiji
+      }
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+2]=='l')
       {
         Serial.println("left");
         irsend.sendNEC(0xFD9867, 32);   
 //        irsend.sendNEC(0xFFFFFFFF, 64);   
+        break;
       }
-      else if(myStringSerial_down[i]=='r'&&myStringSerial_down[i+1]=='i')
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+2]=='r')
       {
         Serial.println("right");
         irsend.sendNEC(0xFD18E7, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
-      else if(myStringSerial_down[i]=='u'&&myStringSerial_down[i+1]=='p')
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+2]=='u')
       {        
         Serial.println("up");
         irsend.sendNEC(0xFD6897, 32);   
-//        irsend.sendNEC(0xFFFFFFFF, 64);   
+//        irsend.sendNEC(0xFFFFFFFF, 64); 
+        break;  
       }
-      else if(myStringSerial_down[i]=='d'&&myStringSerial_down[i+1]=='o')
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+2]=='d')
       {
         Serial.println("down");
         irsend.sendNEC(0xFDE817, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
-      else if(myStringSerial_down[i]=='v'&&myStringSerial_down[i+2]=='u')
+      else if(myStringSerial_down[i]=='v' && myStringSerial_down[i+2]=='u')
       {
         Serial.println("voice_up");
         irsend.sendNEC(0xFD22DD, 32);  
@@ -130,8 +140,9 @@ void package_analysis()
         delay(20);// This need change voice twice to complite once
         irsend.sendNEC(0xFD22DD, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
-      else if(myStringSerial_down[i]=='v'&&myStringSerial_down[i+2]=='d')
+      else if(myStringSerial_down[i]=='v' && myStringSerial_down[i+2]=='d')
       {
         Serial.println("voice_down");
         irsend.sendNEC(0xFDC23D, 32); 
@@ -139,18 +150,42 @@ void package_analysis()
         delay(20);// This need change voice twice to complite once
         irsend.sendNEC(0xFDC23D, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
-      else if(myStringSerial_down[i]=='c'&&myStringSerial_down[i+2]=='u')
+      else if(myStringSerial_down[i]=='c' && myStringSerial_down[i+2]=='u')
       {
         Serial.println("channel_up");
-        irsend.sendNEC(0xFD52AD, 32);  
+        irsend.sendNEC(0xFDE817, 32);  
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
-      else if(myStringSerial_down[i]=='c'&&myStringSerial_down[i+2]=='d')
+      else if(myStringSerial_down[i]=='c' && myStringSerial_down[i+2]=='d')
       {
         Serial.println("channel_down");
-        irsend.sendNEC(0xFDD22D, 32);
+        irsend.sendNEC(0xFD6897, 32);
 //        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
+      }
+      else if(myStringSerial_down[i]=='m' && myStringSerial_down[i+1]=='a')
+      {
+        Serial.println("main page");
+        irsend.sendNEC(0xFD3AC5, 32);
+//        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
+      }
+      else if(myStringSerial_down[i]=='e' && myStringSerial_down[i+1]=='x')
+      {
+        Serial.println("exit");
+        irsend.sendNEC(0xFD12ED, 32);
+//        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
+      }
+      else if(myStringSerial_down[i]=='s' && myStringSerial_down[i+1]=='e')
+      {
+        Serial.println("set");
+        irsend.sendNEC(0xFDF00F, 32);
+//        irsend.sendNEC(0xFFFFFFFF, 64);  
+        break;
       }
     }
 }
