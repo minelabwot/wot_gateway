@@ -12,7 +12,7 @@ LM75 sensor(LM75_ADDRESS | 0b000);
 void setup (void)
 {
   //初始化串口
-  Serial.begin(9600);
+  Serial.begin(115200);
   //初始化I2C
   Wire.begin();  
   delay(3000);
